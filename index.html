@@ -1,931 +1,1013 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AulaSound - Laboratorio Virtual de Acústica</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for Graphical Comparison -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+classdef AulaSound < matlab.apps.AppBase
 
-    <!-- HEADER / NAVIGATION BAR -->
-    <header class="border-b border-slate-800 bg-slate-900/95 backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure                        matlab.ui.Figure
+        PanelExperimento                matlab.ui.container.Panel
+        UITable                         matlab.ui.control.Table
+        CapturarTonoButton              matlab.ui.control.Button
+        Label_33                        matlab.ui.control.Label
+        VolverButton                    matlab.ui.control.Button
+        Label_32                        matlab.ui.control.Label
+        FrecuenciaPanel                 matlab.ui.container.Panel
+        ComenzarButton                  matlab.ui.control.Button
+        Image9                          matlab.ui.control.Image
+        EscribeaquTextArea_2            matlab.ui.control.TextArea
+        EscribeaquTextArea_2Label       matlab.ui.control.Label
+        Label_31                        matlab.ui.control.Label
+        LoquecalcularemosLabel          matlab.ui.control.Label
+        Label_30                        matlab.ui.control.Label
+        Image8                          matlab.ui.control.Image
+        Image7                          matlab.ui.control.Image
+        Label_29                        matlab.ui.control.Label
+        Label_28                        matlab.ui.control.Label
+        Label_27                        matlab.ui.control.Label
+        Label_26                        matlab.ui.control.Label
+        Experimento2Label               matlab.ui.control.Label
+        ResultadosPanel                 matlab.ui.container.Panel
+        VolveralmenButton               matlab.ui.control.Button
+        RepetirexperimentButton         matlab.ui.control.Button
+        Label_24                        matlab.ui.control.Label
+        ResultadosLabel                 matlab.ui.control.Label
+        UIAxesTeorico                   matlab.ui.control.UIAxes
+        UIAxesMediciones                matlab.ui.control.UIAxes
+        MedicionesPanel                 matlab.ui.container.Panel
+        VerResultadosButton             matlab.ui.control.Button
+        Label_23                        matlab.ui.control.Label
+        MedicionesUITable               matlab.ui.control.Table
+        RegistrarMedicionButton         matlab.ui.control.Button
+        REGISTRODERESULTADOSLabel       matlab.ui.control.Label
+        Label_22                        matlab.ui.control.Label
+        EstadoMicrofonoLabel            matlab.ui.control.Label
+        ActivarMicrofonoButton          matlab.ui.control.Button
+        DistanciaEditField              matlab.ui.control.NumericEditField
+        DistanciaEditFieldLabel         matlab.ui.control.Label
+        Label_21                        matlab.ui.control.Label
+        Label_20                        matlab.ui.control.Label
+        CONFIGURACINDELAMEDICINLabel    matlab.ui.control.Label
+        Label_19                        matlab.ui.control.Label
+        REGISTRODEMEDICIONESLabel       matlab.ui.control.Label
+        PROPAGACIONDELSONIDO2Panel      matlab.ui.container.Panel
+        Label_18                        matlab.ui.control.Label
+        Label_17                        matlab.ui.control.Label
+        Label_16                        matlab.ui.control.Label
+        COMENZARMEDICIONESButton        matlab.ui.control.Button
+        CONFIGURACINEXPERIMENTALLabel   matlab.ui.control.Label
+        Image6                          matlab.ui.control.Image
+        Label_14                        matlab.ui.control.Label
+        EscribeaquTextArea              matlab.ui.control.TextArea
+        EscribeaquTextAreaLabel         matlab.ui.control.Label
+        FORMULATUHIPTESISLabel          matlab.ui.control.Label
+        Label_12                        matlab.ui.control.Label
+        Label_11                        matlab.ui.control.Label
+        TutorialdeusoPanel              matlab.ui.container.Panel
+        ANTERIORButton                  matlab.ui.control.StateButton
+        Image5                          matlab.ui.control.Image
+        Label_10                        matlab.ui.control.Label
+        PASO1CONOCEAULASONORALabel      matlab.ui.control.Label
+        SIGUIENTEButton                 matlab.ui.control.StateButton
+        SaltartutorialButton            matlab.ui.control.StateButton
+        TUTORIALDEUSOLabel              matlab.ui.control.Label
+        Label_4                         matlab.ui.control.Label
+        BIENVENIDOAAULASONORALabel      matlab.ui.control.Label
+        LaboratoriodeexperimentosPanel  matlab.ui.container.Panel
+        Image4                          matlab.ui.control.Image
+        Image3                          matlab.ui.control.Image
+        Image2                          matlab.ui.control.Image
+        ACSTICADELASALAPanel            matlab.ui.container.Panel
+        Label_9                         matlab.ui.control.Label
+        COMENZAREXPERIMENTO3Button_3    matlab.ui.control.StateButton
+        FRECUENCIAYONDASPanel           matlab.ui.container.Panel
+        Label_8                         matlab.ui.control.Label
+        COMENZAREXPERIMENTO2Button_2    matlab.ui.control.StateButton
+        PROPAGACINDELSONIDOPanel        matlab.ui.container.Panel
+        COMENZAREXPERIMENTO1Button      matlab.ui.control.StateButton
+        Label_7                         matlab.ui.control.Label
+        Label_6                         matlab.ui.control.Label
+        Label_5                         matlab.ui.control.Label
+        EMPEZARLABORATORIOButton        matlab.ui.control.Button
+        Label_3                         matlab.ui.control.Label
+        Label_2                         matlab.ui.control.Label
+        Label                           matlab.ui.control.Label
+        LABORATORIODEACSTICALabel       matlab.ui.control.Label
+        LabSoundLabel                   matlab.ui.control.Label
+        Image                           matlab.ui.control.Image
+    end
+
+  
+    properties (Access = private)
+        PasoTutorial = 1
+        GrabadorAudio % Objeto para capturar el sonido del micrófono
+    end
+    % Callbacks that handle component events
+    methods (Access = private)
+        function startupFcn(app)
+            % Crear los datos iniciales con ceros (o puedes usar celdas vacías)
+            numMedicion = (1:5)'; 
+            distancia = zeros(5, 1);
+            nivelSenal = zeros(5, 1);
             
-            <!-- Brand & Navigation Breadcrumbs -->
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-blue-500/20">
-                    <i class="fa-solid fa-wave-square"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="text-xl font-extrabold tracking-tight text-white">AulaSound</h1>
-                        <span id="currentExpBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase">Menú Principal</span>
-                    </div>
-                    <p class="text-xs text-slate-400 hidden sm:block">Laboratorio Virtual de Física Acústica</p>
-                </div>
-            </div>
+            app.MedicionesUITable.Data = table(numMedicion, distancia, nivelSenal, ...
+                'VariableNames', {'N.° de medición', 'Distancia (cm)', 'Nivel de señal'});
+        end
+    end
 
-            <!-- Header Action Controls -->
-            <div class="flex items-center gap-2">
-                <button id="btnHome" onclick="openMenu()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-2">
-                    <i class="fa-solid fa-house text-blue-400"></i>
-                    <span>Menú Principal</span>
-                </button>
+    % Callbacks that handle component events
+    methods (Access = private)
 
-                <button id="btnOpenTutorial" onclick="showTutorialStep(0)" class="px-3 py-1.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs font-semibold rounded-lg border border-indigo-500/30 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-question text-indigo-400"></i>
-                    <span>Tutorial</span>
-                </button>
-            </div>
-        </div>
-    </header>
+        % Code that executes after component creation
+        function startupFcn2(app)
+            % Crear una celda con 5 filas y 3 columnas iniciales
+            datosIniciales = {
+                1, 0, 0;
+                2, 0, 0;
+                3, 0, 0;
+                4, 0, 0;
+                5, 0, 0
+                };
 
-    <!-- ONBOARDING TUTORIAL MODAL -->
-    <div id="tutorialModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl relative">
+            % Asignarlas directamente a los datos de la tabla
+            app.MedicionesUITable.Data = datosIniciales;
+        end
+
+        % Button pushed function: EMPEZARLABORATORIOButton
+        function EMPEZARLABORATORIOButtonPushed(app, event)
+            app.TutorialdeusoPanel.Visible = 'on';
             
-            <button onclick="closeTutorial()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+        end
 
-            <!-- SLIDE 1 -->
-            <div id="tutSlide-0" class="tut-slide space-y-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-2xl">
-                    <i class="fa-solid fa-hand-wave"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">¡Bienvenido a AulaSound!</h3>
-                <p class="text-slate-300 text-sm leading-relaxed">
-                    Laboratorio interactivo de acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.
-                </p>
-                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 text-xs text-slate-400 space-y-1">
-                    <span class="font-bold text-slate-200 block">💡 Método científico interactivo:</span>
-                    Plantea tu hipótesis, realiza 5 mediciones guiadas y contrasta tus resultados con gráficos analíticos.
-                </div>
-            </div>
+        % Value changed function: SaltartutorialButton
+        function SaltartutorialButtonValueChanged(app, event)
+            value = app.SaltartutorialButton.Value;
+            app.TutorialdeusoPanel.Visible = 'off';
+            app.LaboratoriodeexperimentosPanel.Visible = 'on';
+        end
 
-            <!-- SLIDE 2 -->
-            <div id="tutSlide-1" class="tut-slide space-y-4 hidden">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl">
-                    <i class="fa-solid fa-diagram-project"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">Estructura de las 3 Experiencias</h3>
-                <p class="text-slate-300 text-sm leading-relaxed">
-                    Cada módulo sigue un flujo estructurado de 3 pasos para asegurar un análisis riguroso:
-                </p>
-                <div class="space-y-2 text-xs">
-                    <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                        <span class="w-6 h-6 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center">1</span>
-                        <span class="text-slate-200 font-medium"><strong>Teoría e Hipótesis:</strong> Contexto clave y planteamiento de expectativa.</span>
-                    </div>
-                    <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                        <span class="w-6 h-6 rounded-full bg-indigo-500 text-white font-bold flex items-center justify-center">2</span>
-                        <span class="text-slate-200 font-medium"><strong>Mediciones en Vivo:</strong> Registro de 5 repeticiones con micrófono o generador.</span>
-                    </div>
-                    <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                        <span class="w-6 h-6 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center">3</span>
-                        <span class="text-slate-200 font-medium"><strong>Resultados y Gráficos:</strong> Comparación teórica vs. empírica con desviación estándar.</span>
-                    </div>
-                </div>
-            </div>
+        % Value changed function: SIGUIENTEButton
+        function SIGUIENTEButtonValueChanged(app, event)
+           
+            if app.PasoTutorial == 4
 
-            <!-- SLIDE 3 -->
-            <div id="tutSlide-2" class="tut-slide space-y-4 hidden">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
-                    <i class="fa-solid fa-microphone-lines"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">Herramientas de Audio Integradas</h3>
-                <p class="text-slate-300 text-sm leading-relaxed">
-                    Utiliza el micrófono de tu dispositivo o el generador de tonos sintéticos integrado para realizar pruebas precisas y exportar tus informes en CSV.
-                </p>
-                <div class="p-4 bg-emerald-950/30 border border-emerald-800/40 rounded-2xl text-xs text-emerald-300">
-                    <i class="fa-solid fa-check-circle mr-1"></i> Todo optimizado para navegador web y dispositivos móviles.
-                </div>
-            </div>
+                app.TutorialdeusoPanel.Visible = 'off';
+                app.LaboratoriodeexperimentosPanel.Visible = 'on';
+                return
 
-            <!-- CONTROLS TUTORIAL -->
-            <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-                <button onclick="closeTutorial()" class="text-xs text-slate-500 hover:text-slate-300 font-medium">
-                    Saltar Tutorial
-                </button>
-
-                <div class="flex items-center gap-2">
-                    <button id="btnPrevTut" onclick="changeTutorialSlide(-1)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 rounded-xl transition">
-                        Anterior
-                    </button>
-                    <button id="btnNextTut" onclick="changeTutorialSlide(1)" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white rounded-xl shadow-lg shadow-blue-600/20 transition">
-                        Siguiente
-                    </button>
-                    <button id="btnFinishTut" onclick="closeTutorial()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white rounded-xl shadow-lg shadow-emerald-600/20 transition hidden">
-                        ¡Comenzar Laboratorio!
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- MAIN CONTAINER -->
-    <div class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow flex flex-col">
-
-        <!-- ==================== VIEW: MAIN MENU (3 CORE EXPERIMENTS) ==================== -->
-        <section id="view-menu" class="space-y-8">
-            <div class="bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/60 border border-slate-800 rounded-3xl p-6 md:p-10 space-y-4">
-                <span class="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-950 px-3 py-1 rounded-full border border-blue-800/40">Menú Principal</span>
-                <h2 class="text-3xl md:text-5xl font-extrabold text-white">Laboratorio de Acústica</h2>
-                <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl">
-                    Seleccione una de las tres experiencias fundamentales para iniciar el protocolo experimental.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- CARD EXP 1 -->
-                <div onclick="selectExperiment(1)" class="bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-3xl space-y-4 cursor-pointer transition transform hover:-translate-y-1 shadow-xl group flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                <i class="fa-solid fa-volume-high"></i>
-                            </div>
-                            <span class="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-lg border border-emerald-800/40">Exp 01</span>
-                        </div>
-                        <div class="space-y-1">
-                            <h3 class="text-xl font-bold text-white group-hover:text-emerald-300 transition">1. Propagación del Sonido</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed">Estudio de la atenuación de la presión sonora (dB) respecto a la distancia de la fuente.</p>
-                        </div>
-                    </div>
-                    <div class="pt-4 flex items-center text-xs font-bold text-emerald-400 gap-2">
-                        <span>Iniciar Experimento</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                    </div>
-                </div>
-
-                <!-- CARD EXP 2 -->
-                <div onclick="selectExperiment(2)" class="bg-slate-900/80 border border-slate-800 hover:border-blue-500/50 p-6 rounded-3xl space-y-4 cursor-pointer transition transform hover:-translate-y-1 shadow-xl group flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                <i class="fa-solid fa-wave-square"></i>
-                            </div>
-                            <span class="text-xs font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-lg border border-blue-800/40">Exp 02</span>
-                        </div>
-                        <div class="space-y-1">
-                            <h3 class="text-xl font-bold text-white group-hover:text-blue-300 transition">2. Frecuencia y Ondas</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed">Medición de la frecuencia fundamental ($f$) y cálculo del período ($T = 1/f$).</p>
-                        </div>
-                    </div>
-                    <div class="pt-4 flex items-center text-xs font-bold text-blue-400 gap-2">
-                        <span>Iniciar Experimento</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                    </div>
-                </div>
-
-                <!-- CARD EXP 3 (EL MAS IMPORTANTE) -->
-                <div onclick="selectExperiment(3)" class="bg-slate-900/80 border border-slate-800 hover:border-purple-500/50 p-6 rounded-3xl space-y-4 cursor-pointer transition transform hover:-translate-y-1 shadow-xl group flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-2xl group-hover:scale-110 transition">
-                                <i class="fa-solid fa-building-shield"></i>
-                            </div>
-                            <span class="text-xs font-bold text-purple-400 bg-purple-950 px-2.5 py-1 rounded-lg border border-purple-800/40">Exp 03</span>
-                        </div>
-                        <div class="space-y-1">
-                            <h3 class="text-xl font-bold text-white group-hover:text-purple-300 transition">3. Acústica de la Sala</h3>
-                            <p class="text-xs text-slate-400 leading-relaxed">Análisis de tiempo de reverberación ($RT_{60}$) y nivel de ruido ambiental de fondo.</p>
-                        </div>
-                    </div>
-                    <div class="pt-4 flex items-center text-xs font-bold text-purple-400 gap-2">
-                        <span>Iniciar Experimento</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- ==================== VIEW: EXPERIMENT WORKFLOW CONTAINER ==================== -->
-        <section id="view-experiment" class="space-y-6 hidden">
+            end
+            app.PasoTutorial = app.PasoTutorial + 1;
             
-            <!-- EXPERIMENT STEPS PROGRESS BAR -->
-            <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex items-center justify-between gap-2 overflow-x-auto">
-                <button onclick="goToStep(1)" id="stepBtn-1" class="flex-1 min-w-[140px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition bg-blue-600 text-white">
-                    <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px]">1</span>
-                    <span>1. Teoría e Hipótesis</span>
-                </button>
-                <i class="fa-solid fa-chevron-right text-slate-700 text-xs"></i>
-                <button onclick="goToStep(2)" id="stepBtn-2" class="flex-1 min-w-[140px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition bg-slate-800 text-slate-400 hover:text-white">
-                    <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px]">2</span>
-                    <span>2. Mediciones en Vivo</span>
-                </button>
-                <i class="fa-solid fa-chevron-right text-slate-700 text-xs"></i>
-                <button onclick="goToStep(3)" id="stepBtn-3" class="flex-1 min-w-[140px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition bg-slate-800 text-slate-400 hover:text-white">
-                    <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px]">3</span>
-                    <span>3. Resultados y Gráficos</span>
-                </button>
-            </div>
+            if app.PasoTutorial == 2
 
-            <!-- PASO 1: TEORÍA E HIPÓTESIS -->
-            <div id="expStep-1" class="exp-step-content space-y-6">
-                <div class="border-b border-slate-800 pb-4 flex items-center justify-between">
-                    <div>
-                        <span id="expTitleBadge" class="text-xs font-bold text-blue-400 uppercase tracking-widest">Experimento</span>
-                        <h2 id="expTitleHeader" class="text-2xl font-bold text-white">Título del Experimento</h2>
-                    </div>
-                </div>
+                app.BIENVENIDOAAULASONORALabel.Visible = 'off';
+                app.Label_4.Visible = 'off';
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-2">
-                        <h3 class="text-sm font-bold text-blue-400 flex items-center gap-2">
-                            <i class="fa-solid fa-microscope"></i>
-                            <span>🔬 Fundamento Teórico:</span>
-                        </h3>
-                        <p id="expAnalizaremosText" class="text-xs text-slate-300 leading-relaxed">
-                            Descripción del fenómeno acústico a estudiar.
-                        </p>
-                    </div>
+                app.PASO1CONOCEAULASONORALabel.Text = 'PASO 2: FORMULA TU HIPOTESIS';
 
-                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-2">
-                        <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
-                            <i class="fa-solid fa-calculator"></i>
-                            <span>📊 Variables Clave:</span>
-                        </h3>
-                        <div id="expCalcularemosText" class="text-xs text-slate-300 space-y-1">
-                            Parámetros a registrar y calcular.
-                        </div>
-                    </div>
-                </div>
+                app.Label_10.Text = 'Antes de comenzar, plantea una hipotesis. ¿Que crees que ocurrira con el nivel sonoro cuando aumente la distancia entre la fuente de sonido y el microfono?';
 
-                <!-- HYPOTHESIS FORMULATION -->
-                <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-3">
-                    <div class="flex items-center justify-between">
-                        <label class="text-xs font-bold text-amber-400 uppercase tracking-wider block">✍️ Planteamiento de Tu Hipótesis</label>
-                        <span class="text-[10px] text-slate-500">Requerido antes de iniciar mediciones</span>
-                    </div>
-                    <textarea id="expHypothesisInput" rows="3" placeholder="Redacte su hipótesis teórica (ej. expectativa de atenuación o reverberación)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"></textarea>
-                </div>
+            end
+            if app.PasoTutorial == 3
 
-                <div class="flex justify-end pt-2">
-                    <button onclick="goToStep(2)" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center gap-2">
-                        <span>Siguiente: Ir a Mediciones</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
+                app.PASO1CONOCEAULASONORALabel.Text = 'PASO 3: TOMA DE MEDICIONES';
 
-            <!-- PASO 2: MEDICIONES EN VIVO -->
-            <div id="expStep-2" class="exp-step-content space-y-6 hidden">
-                
-                <!-- AUDIO & HARDWARE TOOLBAR -->
-                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <button id="btnToggleMic" onclick="toggleMicrophone()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
-                            <i class="fa-solid fa-microphone"></i>
-                            <span id="btnMicText">Activar Micrófono</span>
-                        </button>
-                        <span id="micStatusText" class="text-xs text-slate-400 font-medium">Micrófono inactivo</span>
-                    </div>
+                app.Label_10.Text = 'Ubica el dispositivo a diferentes distancias de la fuente sonora. Activa el microfono, registra las mediciones y repite cada prueba al menos cinco veces para obtener resultados mas confiables.';
 
-                    <!-- Tone Generator -->
-                    <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl p-1.5 px-3">
-                        <span class="text-xs text-slate-400 font-semibold">Tono Sintético:</span>
-                        <select id="genWaveType" class="bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded px-2 py-1 focus:outline-none">
-                            <option value="sine">Seno</option>
-                            <option value="square">Cuadrada</option>
-                            <option value="triangle">Triangular</option>
-                        </select>
-                        <input type="number" id="genFreqInput" value="440" min="20" max="4000" class="w-16 bg-slate-900 border border-slate-700 text-xs text-center text-blue-400 font-mono font-bold rounded py-1 focus:outline-none">
-                        <span class="text-xs text-slate-500 font-mono">Hz</span>
-                        <button id="btnToggleTone" onclick="toggleToneGenerator()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded transition">
-                            <span id="btnToneText">Emitir Tono</span>
-                        </button>
-                    </div>
-                </div>
+            end
+            if app.PasoTutorial == 4
 
-                <!-- DUAL CANVAS VISUALIZERS -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-400 uppercase">Osciloscopio (Tiempo)</span>
-                            <span class="text-[10px] font-mono text-slate-500">Amplitud / Tiempo</span>
-                        </div>
-                        <canvas id="canvasOsc" class="w-full h-44 rounded-lg bg-slate-900 border border-slate-800"></canvas>
-                    </div>
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-400 uppercase">Espectro FFT (Frecuencia)</span>
-                            <span id="livePeakDisplay" class="text-xs font-mono font-bold text-emerald-400">Pico: --</span>
-                        </div>
-                        <canvas id="canvasFFT" class="w-full h-44 rounded-lg bg-slate-900 border border-slate-800"></canvas>
-                    </div>
-                </div>
+                app.PASO1CONOCEAULASONORALabel.Text = 'PASO 4: ANALIZA TUS RESULTADOS';
 
-                <!-- CAPTURE ACTION -->
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
-                    <div id="captureInstructionText" class="text-xs text-slate-400">
-                        Capture 5 repeticiones consecutivas para completar la tabla.
-                    </div>
-                    <button onclick="recordSample()" class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>📸 REGISTRAR MEDICIÓN (N° <span id="currentSampleCount">0</span>/5)</span>
-                    </button>
-                </div>
+                app.Label_10.Text = 'Observa las graficas y los datos obtenidos durante el experimento. Compara tus mediciones con los valores teoricos, identifica posibles diferencias y reflexiona sobre como influye la distancia en la propagacion del sonido.';
 
-                <!-- TABLE 5 REPETITIONS -->
-                <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Tabla de Repeticiones</h3>
-                        <button onclick="clearCurrentData()" class="text-xs text-slate-500 hover:text-slate-300">Limpiar Tabla</button>
-                    </div>
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-950 text-xs text-slate-400 border-b border-slate-800">
-                            <tr id="tableHeaderRow">
-                                <th class="py-2.5 px-3 text-center w-16">N°</th>
-                                <th class="py-2.5 px-3">Variable 1</th>
-                                <th class="py-2.5 px-3">Variable 2</th>
-                                <th class="py-2.5 px-3 text-right">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBodyExp" class="divide-y divide-slate-800/60 font-mono">
-                            <!-- JS Dynamic -->
-                        </tbody>
-                    </table>
-                </div>
+                app.SIGUIENTEButton.Text = 'COMENZAR';
+                app.SIGUIENTEButton.Visible = 'on';
+                app.SaltartutorialButton.Visible = 'off';
+                app.ANTERIORButton.Visible = 'on';
+            end
+        end
 
-                <div class="flex justify-between pt-2">
-                    <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
-                        ← Volver a Teoría
-                    </button>
-                    <button onclick="goToStep(3)" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center gap-2">
-                        <span>Ver Resultados y Gráficos</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
+        % Value changed function: ANTERIORButton
+        function ANTERIORButtonValueChanged(app, event)
 
-            <!-- PASO 3: RESULTADOS Y GRÁFICOS -->
-            <div id="expStep-3" class="exp-step-content space-y-6 hidden">
-                <div class="border-b border-slate-800 pb-4">
-                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Paso 03</span>
-                    <h2 class="text-2xl font-bold text-white">Resultados y Análisis Comparativo</h2>
-                </div>
+               if app.PasoTutorial > 1
 
-                <!-- HYPOTHESIS & METRICS SUMMARY -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3">
-                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">✍️ Hipótesis Planteada</span>
-                        <p id="displayUserHypothesis" class="text-xs text-slate-300 italic leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-800/60">
-                            (Sin registrar)
-                        </p>
-                    </div>
+                    app.PasoTutorial = app.PasoTutorial - 1;
 
-                    <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3">
-                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">📊 Estadísticas de Mediciones</span>
-                        <div class="grid grid-cols-2 gap-4 pt-1">
-                            <div>
-                                <div class="text-2xl font-mono font-extrabold text-emerald-400" id="displayMeanResult">--</div>
-                                <p class="text-[11px] text-slate-400">Promedio empírico</p>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-mono font-extrabold text-indigo-400" id="displayStdDevResult">--</div>
-                                <p class="text-[11px] text-slate-400">Desviación estándar (σ)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    app.SIGUIENTEButton.Visible = 'on';
 
-                <!-- VISUAL CHART.JS COMPARISON -->
-                <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-bold text-white">Gráfico Comparativo: Teórico vs. Empírico (5 Repeticiones)</h3>
-                        <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded border border-blue-500/20">Análisis Gráfico</span>
-                    </div>
-                    <div class="relative w-full h-72 bg-slate-950 p-4 rounded-xl border border-slate-800">
-                        <canvas id="comparisonChart"></canvas>
-                    </div>
-                </div>
+                    if app.PasoTutorial == 1
 
-                <!-- ACTIONS FOOTER -->
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
-                    <button onclick="exportCurrentCSV()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-csv text-emerald-400"></i>
-                        <span>Exportar Informe CSV</span>
-                    </button>
+                        app.BIENVENIDOAAULASONORALabel.Visible = 'on';
+                        app.Label_4.Visible = 'on';
 
-                    <button onclick="openMenu()" class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-house"></i>
-                        <span>Volver al Menú Principal</span>
-                    </button>
-                </div>
-            </div>
+                        app.PASO1CONOCEAULASONORALabel.Text = 'PASO 1: CONOCE AULASONORA';
 
-        </section>
-    </div>
+                        app.Label_10.Text = 'AulaSonora es un laboratorio interactivo que permite estudiar los fenomenos acusticos mediante experiencias practicas. Podras explorar el sonido, realizar mediciones y descubrir como se comporta en diferentes condiciones.';
 
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
-        <p>© 2026 AulaSound Project. Laboratorio Virtual de Acústica.</p>
-    </footer>
+                    elseif app.PasoTutorial == 2
 
-    <!-- INTERACTIVE SCRIPT -->
-    <script>
-        // 3 CORE EXPERIMENTS CONFIGURATION
-        const EXPERIMENTS_CONFIG = {
-            1: {
-                title: "1. Propagación del Sonido",
-                badge: "Experimento 01",
-                analizaremos: "Estudio de la disminución del Nivel de Presión Sonora (dB) a medida que aumenta la distancia respecto a la fuente sonora.",
-                calcularemos: "• Distancia al emisor (m)<br>• Nivel de presión sonora registrado (dB)",
-                col1: "Distancia r (m)",
-                col2: "Presión Sonora (dB)",
-                unit1: "m",
-                unit2: "dB",
-                theoVal: 65.0
-            },
-            2: {
-                title: "2. Frecuencia y Ondas",
-                badge: "Experimento 02",
-                analizaremos: "Medición de ciclos por segundo en la frecuencia fundamental (Hz) y su relación inversa con el periodo de onda T = 1/f.",
-                calcularemos: "• Frecuencia fundamental f (Hz)<br>• Periodo T = 1000/f (ms)",
-                col1: "Frecuencia f (Hz)",
-                col2: "Periodo T (ms)",
-                unit1: "Hz",
-                unit2: "ms",
-                theoVal: 440.0
-            },
-            3: {
-                title: "3. Acústica de la Sala",
-                badge: "Experimento 03",
-                analizaremos: "Análisis del comportamiento acústico del recinto, evaluando el tiempo de reverberación (RT60) y el nivel de ruido ambiental de fondo.",
-                calcularemos: "• Tiempo de Reverberación RT60 (s)<br>• Ruido de Fondo Ambiental (dB)",
-                col1: "RT60 (s)",
-                col2: "Ruido Fondo (dB)",
-                unit1: "s",
-                unit2: "dB",
-                theoVal: 0.50
-            }
-        };
+                        app.PASO1CONOCEAULASONORALabel.Text = 'PASO 2: FORMULA TU HIPOTESIS';
 
-        // GLOBAL STATE
-        const state = {
-            currentExpId: 1,
-            currentStep: 1,
-            audioCtx: null,
-            analyser: null,
-            micStream: null,
-            isMicActive: false,
-            genOscillator: null,
-            genGain: null,
-            isTonePlaying: false,
-            simulatedTime: 0,
-            currentPeakFreq: 440,
-            data: { 1: [], 2: [], 3: [] },
-            hypotheses: { 1: "", 2: "", 3: "" },
-            chartInstance: null
-        };
+                        app.Label_10.Text = 'Antes de comenzar, plantea una hipotesis. ¿Que crees que ocurrira con el nivel sonoro cuando aumente la distancia entre la fuente de sonido y el microfono?';
 
-        // DOM ELEMENTS
-        const tutorialModal = document.getElementById('tutorialModal');
-        const viewMenu = document.getElementById('view-menu');
-        const viewExperiment = document.getElementById('view-experiment');
-        const currentExpBadge = document.getElementById('currentExpBadge');
+                    elseif app.PasoTutorial == 3
 
-        // TUTORIAL ENGINE
-        let tutSlideIndex = 0;
-        function showTutorialStep(index) {
-            tutSlideIndex = index;
-            document.querySelectorAll('.tut-slide').forEach((slide, i) => {
-                slide.classList.toggle('hidden', i !== index);
-            });
-            document.getElementById('btnPrevTut').classList.toggle('hidden', index === 0);
-            document.getElementById('btnNextTut').classList.toggle('hidden', index === 2);
-            document.getElementById('btnFinishTut').classList.toggle('hidden', index !== 2);
-            tutorialModal.classList.remove('hidden');
-        }
+                        app.PASO1CONOCEAULASONORALabel.Text = 'PASO 3: TOMA DE MEDICIONES';
 
-        function changeTutorialSlide(dir) {
-            showTutorialStep(tutSlideIndex + dir);
-        }
+                        app.Label_10.Text = 'Ubica el dispositivo a diferentes distancias de la fuente sonora. Activa el microfono, registra las mediciones y repite cada prueba al menos cinco veces para obtener resultados mas confiables.';
 
-        function closeTutorial() {
-            tutorialModal.classList.add('hidden');
-        }
+                    end
 
-        // NAVIGATION
-        function openMenu() {
-            viewMenu.classList.remove('hidden');
-            viewExperiment.classList.add('hidden');
-            currentExpBadge.textContent = "Menú Principal";
-        }
+               end
+        end
 
-        function selectExperiment(expId) {
-            state.currentExpId = expId;
-            const conf = EXPERIMENTS_CONFIG[expId];
-            
-            document.getElementById('expTitleBadge').textContent = conf.badge;
-            document.getElementById('expTitleHeader').textContent = conf.title;
-            document.getElementById('expAnalizaremosText').innerHTML = conf.analizaremos;
-            document.getElementById('expCalcularemosText').innerHTML = conf.calcularemos;
+        % Button pushed function: ActivarMicrofonoButton
+        function ActivarMicrofonoButtonPushed(app, event)
+            % Configurar la frecuencia de muestreo estándar
+            Fs = 44100; 
+            bits = 16;
+            canales = 1;
 
-            document.getElementById('expHypothesisInput').value = state.hypotheses[expId] || "";
+            % Crear el objeto audiorecorder y guardarlo en una propiedad de la app
+            app.GrabadorAudio = audiorecorder(Fs, bits, canales);
 
-            currentExpBadge.textContent = conf.badge;
-            viewMenu.classList.add('hidden');
-            viewExperiment.classList.remove('hidden');
+            % Actualizar texto para indicar que está listo
+            app.EstadoMicrofonoLabel.Text = '● Micrófono activado y listo';
+            app.EstadoMicrofonoLabel.FontColor = [0 0.5 0]; % Verde
+        end
 
-            goToStep(1);
-        }
-
-        function goToStep(stepNumber) {
-            state.currentStep = stepNumber;
-
-            if (document.getElementById('expHypothesisInput')) {
-                state.hypotheses[state.currentExpId] = document.getElementById('expHypothesisInput').value;
-            }
-
-            document.querySelectorAll('.exp-step-content').forEach((sec, i) => {
-                sec.classList.toggle('hidden', i + 1 !== stepNumber);
-            });
-
-            for (let i = 1; i <= 3; i++) {
-                const btn = document.getElementById(`stepBtn-${i}`);
-                if (i === stepNumber) {
-                    btn.className = "flex-1 min-w-[140px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition bg-blue-600 text-white shadow-md shadow-blue-600/20";
-                } else {
-                    btn.className = "flex-1 min-w-[140px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition bg-slate-800 text-slate-400 hover:text-white";
-                }
-            }
-
-            if (stepNumber === 2) {
-                renderExperimentTable();
-            } else if (stepNumber === 3) {
-                renderResultsStep();
-            }
-        }
-
-        // AUDIO ENGINE
-        async function ensureAudioContext() {
-            if (!state.audioCtx) {
-                state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (state.audioCtx.state === 'suspended') {
-                await state.audioCtx.resume();
-            }
-        }
-
-        async function toggleMicrophone() {
-            await ensureAudioContext();
-            if (state.isMicActive) {
-                if (state.micStream) {
-                    state.micStream.getTracks().forEach(track => track.stop());
-                }
-                state.isMicActive = false;
-                document.getElementById('btnMicText').textContent = "Activar Micrófono";
-                document.getElementById('micStatusText').textContent = "Micrófono inactivo";
-            } else {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    state.micStream = stream;
-                    state.analyser = state.audioCtx.createAnalyser();
-                    state.analyser.fftSize = 2048;
-                    const source = state.audioCtx.createMediaStreamSource(stream);
-                    source.connect(state.analyser);
-
-                    state.isMicActive = true;
-                    document.getElementById('btnMicText').textContent = "Desactivar Micrófono";
-                    document.getElementById('micStatusText').textContent = "Micrófono activo ✓";
-                } catch (err) {
-                    alert("Acceso al micrófono denegado o no disponible. Puede utilizar el generador de tonos sintéticos.");
-                }
-            }
-        }
-
-        async function toggleToneGenerator() {
-            await ensureAudioContext();
-            const btnText = document.getElementById('btnToneText');
-            if (state.isTonePlaying) {
-                if (state.genOscillator) {
-                    state.genOscillator.stop();
-                    state.genOscillator.disconnect();
-                }
-                state.isTonePlaying = false;
-                btnText.textContent = "Emitir Tono";
-            } else {
-                state.genOscillator = state.audioCtx.createOscillator();
-                state.genGain = state.audioCtx.createGain();
-                
-                const wave = document.getElementById('genWaveType').value;
-                const freq = parseFloat(document.getElementById('genFreqInput').value) || 440;
-
-                state.genOscillator.type = wave;
-                state.genOscillator.frequency.value = freq;
-                state.genGain.gain.value = 0.15;
-
-                state.genOscillator.connect(state.genGain);
-                state.genGain.connect(state.audioCtx.destination);
-
-                if (!state.analyser) {
-                    state.analyser = state.audioCtx.createAnalyser();
-                    state.analyser.fftSize = 2048;
-                }
-                state.genGain.connect(state.analyser);
-
-                state.genOscillator.start();
-                state.isTonePlaying = true;
-                btnText.textContent = "Detener Tono";
-            }
-        }
-
-        // RECORD SAMPLE (5 REPETITIONS)
-        function recordSample() {
-            const expId = state.currentExpId;
-            if (state.data[expId].length >= 5) {
-                alert("Ya se completaron las 5 repeticiones de este experimento.");
+        % Button pushed function: RegistrarMedicionButton
+        function RegistrarMedicionButtonPushed(app, event)
+            % Verificar que el micrófono haya sido activado previamente
+            if isempty(app.GrabadorAudio)
+                uialert(app.UIFigure, 'Primero debes activar el micrófono.', 'Aviso');
                 return;
-            }
+            end
 
-            const count = state.data[expId].length;
-            let val1 = 0, val2 = 0;
-            const freq = state.currentPeakFreq > 0 ? state.currentPeakFreq : (parseFloat(document.getElementById('genFreqInput').value) || 440);
+            % 1. Obtener la distancia escrita por el usuario en el campo de texto
+            distanciaActual = app.DistanciaEditField.Value;
 
-            if (expId === 1) {
-                val1 = 1.0 + count * 1.0; // 1m, 2m, 3m, 4m, 5m
-                val2 = Math.max(35, Math.round(78 - 15 * Math.log10(val1) + (Math.random() * 1.2 - 0.6)));
-            } else if (expId === 2) {
-                val1 = freq + (count * 2 - 2); // slight variation
-                val2 = 1000 / val1;
-            } else if (expId === 3) {
-                val1 = 0.45 + (count * 0.05) + (Math.random() * 0.04 - 0.02); // RT60 around 0.5s
-                val2 = Math.round(32 + count + (Math.random() * 2)); // dB noise
-            }
+            % 2. Grabar 1 segundo exacto de audio en tiempo real
+            recordblocking(app.GrabadorAudio, 1); 
+            audioData = getaudiodata(app.GrabadorAudio);
 
-            state.data[expId].push({ val1, val2 });
-            renderExperimentTable();
-        }
+            % 3. Calcular el nivel de la señal usando el valor RMS (amplitud efectiva)
+            nivelSenalActual = rms(audioData); 
 
-        function clearCurrentData() {
-            state.data[state.currentExpId] = [];
-            renderExperimentTable();
-        }
+            % 4. Obtener los datos actuales de la tabla
+            datosTabla = app.MedicionesUITable.Data;
 
-        function renderExperimentTable() {
-            const expId = state.currentExpId;
-            const conf = EXPERIMENTS_CONFIG[expId];
-            const tbody = document.getElementById('tableBodyExp');
-            const currentList = state.data[expId];
-            
-            document.getElementById('currentSampleCount').textContent = currentList.length;
+            % Buscar la primera fila donde la distancia esté en 0 (vacía)
+            filaVacia = find([datosTabla{:, 2}] == 0, 1);
 
-            document.getElementById('tableHeaderRow').innerHTML = `
-                <th class="py-2.5 px-3 text-center w-16">N°</th>
-                <th class="py-2.5 px-3">${conf.col1}</th>
-                <th class="py-2.5 px-3">${conf.col2}</th>
-                <th class="py-2.5 px-3 text-right">Estado</th>
-            `;
+            if ~isempty(filaVacia)
+                % Asignar la distancia y el nivel calculado en la fila correspondiente
+                datosTabla{filaVacia, 2} = distanciaActual;
+                datosTabla{filaVacia, 3} = nivelSenalActual;
 
-            tbody.innerHTML = '';
-            for (let i = 1; i <= 5; i++) {
-                const item = currentList[i - 1];
-                const tr = document.createElement('tr');
-                tr.className = item ? 'bg-slate-800/40' : 'opacity-40';
-                tr.innerHTML = `
-                    <td class="py-2.5 px-3 text-center text-slate-500 font-bold">${i}</td>
-                    <td class="py-2.5 px-3 text-blue-400">${item ? item.val1.toFixed(2) : '---'}</td>
-                    <td class="py-2.5 px-3 text-indigo-400">${item ? item.val2.toFixed(2) : '---'}</td>
-                    <td class="py-2.5 px-3 text-right">
-                        ${item ? '<span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Registrado</span>' : '<span class="text-[10px] text-slate-600">Pendiente</span>'}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            }
-        }
+                % Actualizar la tabla visualmente en la app
+                app.MedicionesUITable.Data = datosTabla;
+            else
+                uialert(app.UIFigure, 'Ya se han completado las 5 mediciones de esta tanda.', 'Aviso');
+            end 
+        end
 
-        // RENDER RESULTS & CHART.JS
-        function renderResultsStep() {
-            const expId = state.currentExpId;
-            const conf = EXPERIMENTS_CONFIG[expId];
-            const hyp = state.hypotheses[expId];
-            const list = state.data[expId];
+        % Value changed function: COMENZAREXPERIMENTO1Button
+        function COMENZAREXPERIMENTO1ButtonValueChanged(app, event)
+            % 1. Ocultar el panel actual de selección de experimentos
+            app.LaboratoriodeexperimentosPanel.Visible = 'off';
 
-            document.getElementById('displayUserHypothesis').textContent = hyp && hyp.trim() !== "" ? hyp : "(Sin registrar hipótesis en Paso 1)";
+            % 2. Mostrar el panel de hipótesis o mediciones (reemplaza 'HipotesisPanel' 
+            % por el nombre exacto que le diste a tu panel en el Component Browser)
+            app.PROPAGACIONDELSONIDO2Panel.Visible = 'on';
+        end
 
-            if (list.length === 0) {
-                document.getElementById('displayMeanResult').textContent = "Sin datos";
-                document.getElementById('displayStdDevResult').textContent = "Sin datos";
-                return;
-            }
+        % Button pushed function: COMENZARMEDICIONESButton
+        function COMENZARMEDICIONESButtonPushed(app, event)
+            % 1. Ocultar el panel anterior (por ejemplo, el de la hipótesis o introducción)
+            app.PROPAGACINDELSONIDOPanel.Visible = 'on';
 
-            // Calculations: Mean & Standard Deviation of Variable 2
-            const vals = list.map(item => item.val2);
-            const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-            const variance = vals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / vals.length;
-            const stdDev = Math.sqrt(variance);
+            % 2. Mostrar el panel de mediciones donde está la tabla y el micrófono
+            app.MedicionesPanel.Visible = 'on';
+        end
 
-            document.getElementById('displayMeanResult').textContent = mean.toFixed(2) + " " + conf.unit2;
-            document.getElementById('displayStdDevResult').textContent = "± " + stdDev.toFixed(2) + " " + conf.unit2;
+        % Button pushed function: VerResultadosButton
+        function VerResultadosButtonPushed(app, event)
 
-            // Render Chart.js Comparison Chart
-            const ctx = document.getElementById('comparisonChart').getContext('2d');
-            if (state.chartInstance) {
-                state.chartInstance.destroy();
-            }
+                % 1. Ocultar el panel actual de mediciones
+                app.MedicionesPanel.Visible = 'off';
 
-            const labels = list.map((_, i) => `Medición ${i + 1}`);
-            const measuredData = vals;
-            const theoLine = Array(list.length).fill(conf.theoVal);
+                % 2. Mostrar el panel de resultados
+                app.ResultadosPanel.Visible = 'on';
 
-            state.chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Empírico (Medición)',
-                            data: measuredData,
-                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            borderWidth: 1,
-                            borderRadius: 6
-                        },
-                        {
-                            label: 'Valor Teórico / Referencia',
-                            data: theoLine,
-                            type: 'line',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 4,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#94a3b8', font: { size: 11 } }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
-                        },
-                        y: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
-                        }
-                    }
-                }
-            });
-        }
+                % 3. Obtener los datos de la tabla de mediciones
+                datosTabla = app.MedicionesUITable.Data;
+                distancias = [datosTabla{:, 2}]';
+                niveles = [datosTabla{:, 3}]';
 
-        // CSV EXPORT
-        function exportCurrentCSV() {
-            const expId = state.currentExpId;
-            const conf = EXPERIMENTS_CONFIG[expId];
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += `INFORME AULASOUND - ${conf.title}\n`;
-            csvContent += `Hipótesis: "${state.hypotheses[expId] || 'Sin registrar'}"\n\n`;
-            csvContent += `N,${conf.col1},${conf.col2}\n`;
+                % --- GRÁFICO 1: Solo tus mediciones experimentales ---
+                % (Asegúrate de que 'UIAxesMediciones' coincida con el nombre exacto de tu primer gráfico)
+                cla(app.UIAxesMediciones);
+                plot(app.UIAxesMediciones, distancias, niveles, 'bo-', 'LineWidth', 1.5, 'MarkerSize', 6);
+                xlabel(app.UIAxesMediciones, 'Distancia (cm)');
+                ylabel(app.UIAxesMediciones, 'Nivel de señal (RMS)');
+                title(app.UIAxesMediciones, 'Datos Experimentales');
+                grid(app.UIAxesMediciones, 'on');
 
-            state.data[expId].forEach((row, i) => {
-                csvContent += `${i + 1},${row.val1.toFixed(2)},${row.val2.toFixed(2)}\n`;
-            });
+                % --- GRÁFICO 2: Solo la curva teórica ---
+                % (Asegúrate de que 'UIAxesTeorico' coincida con el nombre exacto de tu segundo gráfico)
+                cla(app.UIAxesTeorico);
+                distanciasTeoricas = linspace(min(distancias), max(distancias), 100);
+                constanteReferencia = niveles(1) * distancias(1);
+                nivelesTeoricos = constanteReferencia ./ distanciasTeoricas;
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `AulaSound_Exp${expId}_Informe.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+                plot(app.UIAxesTeorico, distanciasTeoricas, nivelesTeoricos, 'r-', 'LineWidth', 2);
+                xlabel(app.UIAxesTeorico, 'Distancia (cm)');
+                ylabel(app.UIAxesTeorico, 'Nivel Teórico Esperado');
+                title(app.UIAxesTeorico, 'Modelo Teórico (1/r)');
+                grid(app.UIAxesTeorico, 'on');
+           
+        end
 
-        // CANVAS ANIMATION LOOP
-        function initCanvasLoop() {
-            const oscCanvas = document.getElementById('canvasOsc');
-            const fftCanvas = document.getElementById('canvasFFT');
+        % Button pushed function: VolveralmenButton
+        function VolveralmenButtonPushed(app, event)
+            % 1. Ocultar el panel de resultados actual
+            app.ResultadosPanel.Visible = 'off';
 
-            function draw() {
-                state.simulatedTime += 0.03;
+            % 2. Ocultar también el panel de mediciones por si acaso quedó activo
+            app.MedicionesPanel.Visible = 'off';
 
-                // OSCILLOSCOPE
-                if (oscCanvas && oscCanvas.clientWidth > 0) {
-                    oscCanvas.width = oscCanvas.clientWidth * window.devicePixelRatio;
-                    oscCanvas.height = oscCanvas.clientHeight * window.devicePixelRatio;
-                    const ctx = oscCanvas.getContext('2d');
-                    const w = oscCanvas.width;
-                    const h = oscCanvas.height;
+            % 3. Ocultar panel de propagacion del sonido
+            app.PROPAGACIONDELSONIDO2Panel.Visible = 'off';
 
-                    ctx.fillStyle = '#0f172a';
-                    ctx.fillRect(0, 0, w, h);
-                    ctx.lineWidth = 2 * window.devicePixelRatio;
-                    ctx.strokeStyle = '#38bdf8';
-                    ctx.beginPath();
+            % 4. Mostrar el menú principal de selección de experimentos
+            app.LaboratoriodeexperimentosPanel.Visible = 'on';
+        end
+    end
 
-                    if (state.analyser) {
-                        const bufferLength = state.analyser.frequencyBinCount;
-                        const dataArray = new Uint8Array(bufferLength);
-                        state.analyser.getByteTimeDomainData(dataArray);
-                        const sliceWidth = w / bufferLength;
-                        let x = 0;
-                        for (let i = 0; i < bufferLength; i++) {
-                            const v = dataArray[i] / 128.0;
-                            const y = (v * h) / 2;
-                            if (i === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
-                            x += sliceWidth;
-                        }
-                    } else {
-                        const points = 80;
-                        const step = w / points;
-                        for (let i = 0; i <= points; i++) {
-                            const x = i * step;
-                            const y = h / 2 + Math.sin(i * 0.2 + state.simulatedTime * 4) * (h * 0.3);
-                            if (i === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
-                        }
-                    }
-                    ctx.stroke();
-                }
+    % Component initialization
+    methods (Access = private)
 
-                // FFT SPECTRUM
-                if (fftCanvas && fftCanvas.clientWidth > 0) {
-                    fftCanvas.width = fftCanvas.clientWidth * window.devicePixelRatio;
-                    fftCanvas.height = fftCanvas.clientHeight * window.devicePixelRatio;
-                    const ctx = fftCanvas.getContext('2d');
-                    const w = fftCanvas.width;
-                    const h = fftCanvas.height;
+        % Create UIFigure and components
+        function createComponents(app)
 
-                    ctx.fillStyle = '#0f172a';
-                    ctx.fillRect(0, 0, w, h);
+            % Get the file path for locating images
+            pathToMLAPP = fileparts(mfilename('fullpath'));
 
-                    if (state.analyser) {
-                        const bufferLength = state.analyser.frequencyBinCount;
-                        const dataArray = new Uint8Array(bufferLength);
-                        state.analyser.getByteFrequencyData(dataArray);
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 640 480];
+            app.UIFigure.Name = 'MATLAB App';
 
-                        let maxVal = -1, maxBin = -1;
-                        for (let i = 2; i < bufferLength / 2; i++) {
-                            if (dataArray[i] > maxVal) {
-                                maxVal = dataArray[i];
-                                maxBin = i;
-                            }
-                        }
+            % Create Image
+            app.Image = uiimage(app.UIFigure);
+            app.Image.Position = [-89 159 820 309];
+            app.Image.ImageSource = fullfile(pathToMLAPP, 'Gemini_Generated_Image_deatdfdeatdfdeat.jpg');
 
-                        if (maxVal > 20) {
-                            state.currentPeakFreq = maxBin * ((state.audioCtx ? state.audioCtx.sampleRate : 44100) / (bufferLength * 2));
-                        } else {
-                            state.currentPeakFreq = parseFloat(document.getElementById('genFreqInput').value) || 440;
-                        }
+            % Create LabSoundLabel
+            app.LabSoundLabel = uilabel(app.UIFigure);
+            app.LabSoundLabel.FontName = 'Care Around';
+            app.LabSoundLabel.FontSize = 30;
+            app.LabSoundLabel.FontWeight = 'bold';
+            app.LabSoundLabel.FontColor = [0.0902 0.2314 0.4];
+            app.LabSoundLabel.Position = [268 369 108 38];
+            app.LabSoundLabel.Text = 'LabSound';
 
-                        const barWidth = w / 48;
-                        for (let i = 0; i < 48; i++) {
-                            const barHeight = (dataArray[i * 4] / 255) * h;
-                            ctx.fillStyle = '#3b82f6';
-                            ctx.fillRect(i * barWidth, h - barHeight, barWidth - 1, barHeight);
-                        }
-                    } else {
-                        state.currentPeakFreq = parseFloat(document.getElementById('genFreqInput').value) || 440;
-                        const barWidth = w / 32;
-                        for (let i = 0; i < 32; i++) {
-                            const center = 12;
-                            const dist = Math.abs(i - center);
-                            const barHeight = Math.max(8, (1 - dist / 12) * h * 0.7 * (0.8 + Math.sin(state.simulatedTime * 3 + i) * 0.2));
-                            ctx.fillStyle = '#3b82f6';
-                            ctx.fillRect(i * barWidth, h - barHeight, barWidth - 1, barHeight);
-                        }
-                    }
+            % Create LABORATORIODEACSTICALabel
+            app.LABORATORIODEACSTICALabel = uilabel(app.UIFigure);
+            app.LABORATORIODEACSTICALabel.FontName = 'Arial';
+            app.LABORATORIODEACSTICALabel.FontSize = 20;
+            app.LABORATORIODEACSTICALabel.FontWeight = 'bold';
+            app.LABORATORIODEACSTICALabel.FontColor = [0.0118 0.149 0.2588];
+            app.LABORATORIODEACSTICALabel.Position = [172 344 298 26];
+            app.LABORATORIODEACSTICALabel.Text = 'LABORATORIO DE ACÚSTICA';
 
-                    document.getElementById('livePeakDisplay').textContent = `Pico: ${state.currentPeakFreq.toFixed(1)} Hz`;
-                }
+            % Create Label
+            app.Label = uilabel(app.UIFigure);
+            app.Label.FontName = 'Arial';
+            app.Label.FontSize = 18;
+            app.Label.FontWeight = 'bold';
+            app.Label.FontColor = [0.0902 0.2314 0.4];
+            app.Label.Position = [53 125 537 35];
+            app.Label.Text = 'Descubre el mundo del sonido a través de la experimentación.';
 
-                requestAnimationFrame(draw);
-            }
+            % Create Label_2
+            app.Label_2 = uilabel(app.UIFigure);
+            app.Label_2.HorizontalAlignment = 'center';
+            app.Label_2.FontName = 'Arial';
+            app.Label_2.FontSize = 18;
+            app.Label_2.Position = [115 103 411 23];
+            app.Label_2.Text = 'Explora fenómenos acústicos, realiza mediciones ';
 
-            requestAnimationFrame(draw);
-        }
+            % Create Label_3
+            app.Label_3 = uilabel(app.UIFigure);
+            app.Label_3.FontName = 'Arial';
+            app.Label_3.FontSize = 14;
+            app.Label_3.Position = [158 77 328 22];
+            app.Label_3.Text = 'y compara tus resultados con los modelos teóricos.';
 
-        window.addEventListener('DOMContentLoaded', () => {
-            showTutorialStep(0);
-            initCanvasLoop();
-        });
-    </script>
-</body>
-</html>
+            % Create EMPEZARLABORATORIOButton
+            app.EMPEZARLABORATORIOButton = uibutton(app.UIFigure, 'push');
+            app.EMPEZARLABORATORIOButton.ButtonPushedFcn = createCallbackFcn(app, @EMPEZARLABORATORIOButtonPushed, true);
+            app.EMPEZARLABORATORIOButton.BackgroundColor = [0.0902 0.302 0.5216];
+            app.EMPEZARLABORATORIOButton.FontName = 'Cambria';
+            app.EMPEZARLABORATORIOButton.FontSize = 20;
+            app.EMPEZARLABORATORIOButton.FontColor = [1 1 1];
+            app.EMPEZARLABORATORIOButton.Position = [180 213 281 56];
+            app.EMPEZARLABORATORIOButton.Text = 'EMPEZAR LABORATORIO';
+
+            % Create LaboratoriodeexperimentosPanel
+            app.LaboratoriodeexperimentosPanel = uipanel(app.UIFigure);
+            app.LaboratoriodeexperimentosPanel.Title = 'Laboratorio de experimentos';
+            app.LaboratoriodeexperimentosPanel.Tag = 'ExperimentosPanel';
+            app.LaboratoriodeexperimentosPanel.FontName = 'Arial';
+            app.LaboratoriodeexperimentosPanel.Position = [1 2 640 480];
+
+            % Create Label_5
+            app.Label_5 = uilabel(app.LaboratoriodeexperimentosPanel);
+            app.Label_5.FontName = 'Arial';
+            app.Label_5.FontSize = 24;
+            app.Label_5.FontColor = [0.0902 0.2314 0.4];
+            app.Label_5.Position = [72 366 496 31];
+            app.Label_5.Text = 'EXPLORA LOS FENÓMENOS DEL SONIDO';
+
+            % Create Label_6
+            app.Label_6 = uilabel(app.LaboratoriodeexperimentosPanel);
+            app.Label_6.FontName = 'Arial';
+            app.Label_6.FontColor = [0.349 0.3882 0.4392];
+            app.Label_6.Position = [52 330 489 22];
+            app.Label_6.Text = '- Selecciona el experimento que deseas realizar y descubre cómo se comporta el sonido.';
+
+            % Create PROPAGACINDELSONIDOPanel
+            app.PROPAGACINDELSONIDOPanel = uipanel(app.LaboratoriodeexperimentosPanel);
+            app.PROPAGACINDELSONIDOPanel.Title = 'PROPAGACIÓN DEL SONIDO';
+            app.PROPAGACINDELSONIDOPanel.BackgroundColor = [1 0.9882 0.9098];
+            app.PROPAGACINDELSONIDOPanel.Position = [82 247 529 56];
+
+            % Create Label_7
+            app.Label_7 = uilabel(app.PROPAGACINDELSONIDOPanel);
+            app.Label_7.WordWrap = 'on';
+            app.Label_7.Position = [9 5 298 28];
+            app.Label_7.Text = 'Investiga cómo cambia el nivel sonoro al aumentar la distancia entre la fuente y el micrófono.';
+
+            % Create COMENZAREXPERIMENTO1Button
+            app.COMENZAREXPERIMENTO1Button = uibutton(app.PROPAGACINDELSONIDOPanel, 'state');
+            app.COMENZAREXPERIMENTO1Button.ValueChangedFcn = createCallbackFcn(app, @COMENZAREXPERIMENTO1ButtonValueChanged, true);
+            app.COMENZAREXPERIMENTO1Button.Text = 'COMENZAR EXPERIMENTO';
+            app.COMENZAREXPERIMENTO1Button.BackgroundColor = [0.9412 0.8902 0.6314];
+            app.COMENZAREXPERIMENTO1Button.Position = [346 8 174 22];
+
+            % Create FRECUENCIAYONDASPanel
+            app.FRECUENCIAYONDASPanel = uipanel(app.LaboratoriodeexperimentosPanel);
+            app.FRECUENCIAYONDASPanel.Title = 'FRECUENCIA Y ONDAS';
+            app.FRECUENCIAYONDASPanel.BackgroundColor = [1 0.9882 0.9098];
+            app.FRECUENCIAYONDASPanel.Position = [83 135 528 59];
+
+            % Create COMENZAREXPERIMENTO2Button_2
+            app.COMENZAREXPERIMENTO2Button_2 = uibutton(app.FRECUENCIAYONDASPanel, 'state');
+            app.COMENZAREXPERIMENTO2Button_2.Text = 'COMENZAR EXPERIMENTO';
+            app.COMENZAREXPERIMENTO2Button_2.BackgroundColor = [0.9412 0.8902 0.6314];
+            app.COMENZAREXPERIMENTO2Button_2.Position = [346 10 174 22];
+
+            % Create Label_8
+            app.Label_8 = uilabel(app.FRECUENCIAYONDASPanel);
+            app.Label_8.WordWrap = 'on';
+            app.Label_8.Position = [7 2 292 30];
+            app.Label_8.Text = 'Explora las características de las ondas sonoras y analiza sus frecuencias.';
+
+            % Create ACSTICADELASALAPanel
+            app.ACSTICADELASALAPanel = uipanel(app.LaboratoriodeexperimentosPanel);
+            app.ACSTICADELASALAPanel.Title = 'ACÚSTICA DE LA SALA';
+            app.ACSTICADELASALAPanel.BackgroundColor = [1 0.9882 0.9098];
+            app.ACSTICADELASALAPanel.Position = [83 18 528 64];
+
+            % Create COMENZAREXPERIMENTO3Button_3
+            app.COMENZAREXPERIMENTO3Button_3 = uibutton(app.ACSTICADELASALAPanel, 'state');
+            app.COMENZAREXPERIMENTO3Button_3.Text = 'COMENZAR EXPERIMENTO';
+            app.COMENZAREXPERIMENTO3Button_3.BackgroundColor = [0.9412 0.8902 0.6314];
+            app.COMENZAREXPERIMENTO3Button_3.Position = [346 12 174 22];
+
+            % Create Label_9
+            app.Label_9 = uilabel(app.ACSTICADELASALAPanel);
+            app.Label_9.WordWrap = 'on';
+            app.Label_9.Position = [9 8 273 30];
+            app.Label_9.Text = 'Descubre cómo los materiales y el entorno influyen en la propagación del sonido.';
+
+            % Create Image2
+            app.Image2 = uiimage(app.LaboratoriodeexperimentosPanel);
+            app.Image2.Position = [31 247 42 51];
+            app.Image2.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-06 003325.png');
+
+            % Create Image3
+            app.Image3 = uiimage(app.LaboratoriodeexperimentosPanel);
+            app.Image3.Position = [29 140 44 49];
+            app.Image3.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-06 003331.png');
+
+            % Create Image4
+            app.Image4 = uiimage(app.LaboratoriodeexperimentosPanel);
+            app.Image4.Position = [29 25 42 51];
+            app.Image4.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-06 003340.png');
+
+            % Create TutorialdeusoPanel
+            app.TutorialdeusoPanel = uipanel(app.UIFigure);
+            app.TutorialdeusoPanel.Title = 'Tutorial de uso';
+            app.TutorialdeusoPanel.Visible = 'off';
+            app.TutorialdeusoPanel.BackgroundColor = [0.8902 0.902 0.9882];
+            app.TutorialdeusoPanel.Position = [2 -1 640 480];
+
+            % Create BIENVENIDOAAULASONORALabel
+            app.BIENVENIDOAAULASONORALabel = uilabel(app.TutorialdeusoPanel);
+            app.BIENVENIDOAAULASONORALabel.FontName = 'Arial';
+            app.BIENVENIDOAAULASONORALabel.FontSize = 18;
+            app.BIENVENIDOAAULASONORALabel.FontColor = [0.1137 0.1804 0.549];
+            app.BIENVENIDOAAULASONORALabel.Position = [195 330 274 23];
+            app.BIENVENIDOAAULASONORALabel.Text = '¡BIENVENIDO A AULASONORA!';
+
+            % Create Label_4
+            app.Label_4 = uilabel(app.TutorialdeusoPanel);
+            app.Label_4.WordWrap = 'on';
+            app.Label_4.FontName = 'Arial';
+            app.Label_4.FontSize = 14;
+            app.Label_4.FontColor = [0 0 0];
+            app.Label_4.Position = [52 280 551 33];
+            app.Label_4.Text = 'En este laboratorio aprenderás a explorar el sonido mediante experimentos, mediciones y análisis de resultados';
+
+            % Create TUTORIALDEUSOLabel
+            app.TUTORIALDEUSOLabel = uilabel(app.TutorialdeusoPanel);
+            app.TUTORIALDEUSOLabel.FontName = 'Care Around';
+            app.TUTORIALDEUSOLabel.FontSize = 36;
+            app.TUTORIALDEUSOLabel.FontColor = [0 0 0];
+            app.TUTORIALDEUSOLabel.Position = [31 376 252 46];
+            app.TUTORIALDEUSOLabel.Text = 'TUTORIAL DE USO';
+
+            % Create SaltartutorialButton
+            app.SaltartutorialButton = uibutton(app.TutorialdeusoPanel, 'state');
+            app.SaltartutorialButton.ValueChangedFcn = createCallbackFcn(app, @SaltartutorialButtonValueChanged, true);
+            app.SaltartutorialButton.Text = 'Saltar tutorial';
+            app.SaltartutorialButton.BackgroundColor = [1 0.949 0.749];
+            app.SaltartutorialButton.Position = [524 430 100 22];
+
+            % Create SIGUIENTEButton
+            app.SIGUIENTEButton = uibutton(app.TutorialdeusoPanel, 'state');
+            app.SIGUIENTEButton.ValueChangedFcn = createCallbackFcn(app, @SIGUIENTEButtonValueChanged, true);
+            app.SIGUIENTEButton.Text = 'SIGUIENTE';
+            app.SIGUIENTEButton.BackgroundColor = [0.9804 0.898 0.3608];
+            app.SIGUIENTEButton.FontName = 'Cambria';
+            app.SIGUIENTEButton.FontSize = 18;
+            app.SIGUIENTEButton.FontWeight = 'bold';
+            app.SIGUIENTEButton.Position = [484 27 130 32];
+
+            % Create PASO1CONOCEAULASONORALabel
+            app.PASO1CONOCEAULASONORALabel = uilabel(app.TutorialdeusoPanel);
+            app.PASO1CONOCEAULASONORALabel.WordWrap = 'on';
+            app.PASO1CONOCEAULASONORALabel.FontName = 'Book Antiqua';
+            app.PASO1CONOCEAULASONORALabel.FontSize = 18;
+            app.PASO1CONOCEAULASONORALabel.FontColor = [0.0118 0.1333 0.3804];
+            app.PASO1CONOCEAULASONORALabel.Position = [72 228 461 24];
+            app.PASO1CONOCEAULASONORALabel.Text = 'PASO 1: CONOCE AULASONORA';
+
+            % Create Label_10
+            app.Label_10 = uilabel(app.TutorialdeusoPanel);
+            app.Label_10.WordWrap = 'on';
+            app.Label_10.FontSize = 16;
+            app.Label_10.Position = [157 118 417 79];
+            app.Label_10.Text = 'AulaSonora es un laboratorio interactivo que permite estudiar los fenómenos acústicos mediante experiencias prácticas. Podrás explorar el sonido, realizar mediciones y descubrir cómo se comporta en diferentes condiciones.';
+
+            % Create Image5
+            app.Image5 = uiimage(app.TutorialdeusoPanel);
+            app.Image5.Position = [29 103 100 100];
+            app.Image5.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-06 012134.png');
+
+            % Create ANTERIORButton
+            app.ANTERIORButton = uibutton(app.TutorialdeusoPanel, 'state');
+            app.ANTERIORButton.ValueChangedFcn = createCallbackFcn(app, @ANTERIORButtonValueChanged, true);
+            app.ANTERIORButton.Text = 'ANTERIOR';
+            app.ANTERIORButton.Position = [364 32 100 22];
+
+            % Create PROPAGACIONDELSONIDO2Panel
+            app.PROPAGACIONDELSONIDO2Panel = uipanel(app.UIFigure);
+            app.PROPAGACIONDELSONIDO2Panel.Title = 'PROPAGACIÓN DEL SONIDO';
+            app.PROPAGACIONDELSONIDO2Panel.Visible = 'off';
+            app.PROPAGACIONDELSONIDO2Panel.BackgroundColor = [0.8902 0.949 0.9804];
+            app.PROPAGACIONDELSONIDO2Panel.Position = [2 -5 640 480];
+
+            % Create Label_11
+            app.Label_11 = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.Label_11.FontName = 'Care Around';
+            app.Label_11.FontSize = 18;
+            app.Label_11.FontWeight = 'bold';
+            app.Label_11.FontColor = [0.0471 0.1137 0.3804];
+            app.Label_11.Position = [165 410 320 42];
+            app.Label_11.Text = 'EXPERIMENTO 1 · PROPAGACIÓN DEL SONIDO';
+
+            % Create Label_12
+            app.Label_12 = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.Label_12.WordWrap = 'on';
+            app.Label_12.FontName = 'Arial';
+            app.Label_12.Position = [41 392 558 30];
+            app.Label_12.Text = 'Investiga cómo cambia el nivel sonoro al aumentar la distancia entre una fuente sonora y el micrófono.';
+
+            % Create FORMULATUHIPTESISLabel
+            app.FORMULATUHIPTESISLabel = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.FORMULATUHIPTESISLabel.FontName = 'Bell MT';
+            app.FORMULATUHIPTESISLabel.FontSize = 13;
+            app.FORMULATUHIPTESISLabel.FontWeight = 'bold';
+            app.FORMULATUHIPTESISLabel.Position = [52 370 172 22];
+            app.FORMULATUHIPTESISLabel.Text = 'FORMULA TU HIPÓTESIS ';
+
+            % Create EscribeaquTextAreaLabel
+            app.EscribeaquTextAreaLabel = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.EscribeaquTextAreaLabel.HorizontalAlignment = 'right';
+            app.EscribeaquTextAreaLabel.Position = [45 297 75 22];
+            app.EscribeaquTextAreaLabel.Text = 'Escribe aquí ';
+
+            % Create EscribeaquTextArea
+            app.EscribeaquTextArea = uitextarea(app.PROPAGACIONDELSONIDO2Panel);
+            app.EscribeaquTextArea.Position = [135 280 351 41];
+
+            % Create Label_14
+            app.Label_14 = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.Label_14.WordWrap = 'on';
+            app.Label_14.Position = [41 337 450 30];
+            app.Label_14.Text = 'Antes de comenzar, reflexiona: ¿qué crees que ocurrirá con el nivel sonoro cuando aumente la distancia respecto a la fuente de sonido?';
+
+            % Create Image6
+            app.Image6 = uiimage(app.PROPAGACIONDELSONIDO2Panel);
+            app.Image6.Position = [513 280 102 101];
+            app.Image6.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-08 131034.png');
+
+            % Create CONFIGURACINEXPERIMENTALLabel
+            app.CONFIGURACINEXPERIMENTALLabel = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.CONFIGURACINEXPERIMENTALLabel.FontSize = 13;
+            app.CONFIGURACINEXPERIMENTALLabel.FontWeight = 'bold';
+            app.CONFIGURACINEXPERIMENTALLabel.Position = [171 247 222 22];
+            app.CONFIGURACINEXPERIMENTALLabel.Text = 'CONFIGURACIÓN EXPERIMENTAL';
+
+            % Create COMENZARMEDICIONESButton
+            app.COMENZARMEDICIONESButton = uibutton(app.PROPAGACIONDELSONIDO2Panel, 'push');
+            app.COMENZARMEDICIONESButton.ButtonPushedFcn = createCallbackFcn(app, @COMENZARMEDICIONESButtonPushed, true);
+            app.COMENZARMEDICIONESButton.BackgroundColor = [0.5216 0.7451 0.9294];
+            app.COMENZARMEDICIONESButton.FontSize = 14;
+            app.COMENZARMEDICIONESButton.Position = [428 18 187 25];
+            app.COMENZARMEDICIONESButton.Text = 'COMENZAR MEDICIONES';
+
+            % Create Label_16
+            app.Label_16 = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.Label_16.WordWrap = 'on';
+            app.Label_16.FontName = 'Arial';
+            app.Label_16.FontSize = 13;
+            app.Label_16.Position = [45 202 568 32];
+            app.Label_16.Text = 'Antes de comenzar, prepara el espacio de experimentación y establece las condiciones de medición.';
+
+            % Create Label_17
+            app.Label_17 = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.Label_17.FontSize = 14;
+            app.Label_17.Position = [45 70 494 86];
+            app.Label_17.Text = {'1. Ubica una fuente sonora en un lugar fijo.'; '2. Coloca el dispositivo con el micrófono orientado hacia la fuente.'; '3. Mantén constante el volumen de la fuente sonora.'; '4. Realiza mediciones a diferentes distancias.'; '5. Repite cada medición cinco veces para obtener resultados más confiables.'};
+
+            % Create Label_18
+            app.Label_18 = uilabel(app.PROPAGACIONDELSONIDO2Panel);
+            app.Label_18.FontSize = 14;
+            app.Label_18.FontWeight = 'bold';
+            app.Label_18.Position = [72 167 212 22];
+            app.Label_18.Text = 'Instrucciones del experimentó ';
+
+            % Create MedicionesPanel
+            app.MedicionesPanel = uipanel(app.UIFigure);
+            app.MedicionesPanel.Title = 'MedicionesPanel';
+            app.MedicionesPanel.Visible = 'off';
+            app.MedicionesPanel.BackgroundColor = [0.8902 0.949 0.9804];
+            app.MedicionesPanel.Position = [6 1 640 480];
+
+            % Create REGISTRODEMEDICIONESLabel
+            app.REGISTRODEMEDICIONESLabel = uilabel(app.MedicionesPanel);
+            app.REGISTRODEMEDICIONESLabel.FontName = 'Care Around';
+            app.REGISTRODEMEDICIONESLabel.FontSize = 24;
+            app.REGISTRODEMEDICIONESLabel.Position = [82 416 252 31];
+            app.REGISTRODEMEDICIONESLabel.Text = 'REGISTRO DE MEDICIONES';
+
+            % Create Label_19
+            app.Label_19 = uilabel(app.MedicionesPanel);
+            app.Label_19.FontName = 'Arial';
+            app.Label_19.FontSize = 13;
+            app.Label_19.Position = [29 389 482 22];
+            app.Label_19.Text = 'Realiza mediciones del nivel de señal sonora a diferentes distancias de la fuente.';
+
+            % Create CONFIGURACINDELAMEDICINLabel
+            app.CONFIGURACINDELAMEDICINLabel = uilabel(app.MedicionesPanel);
+            app.CONFIGURACINDELAMEDICINLabel.FontName = 'Castellar';
+            app.CONFIGURACINDELAMEDICINLabel.FontSize = 14;
+            app.CONFIGURACINDELAMEDICINLabel.FontWeight = 'bold';
+            app.CONFIGURACINDELAMEDICINLabel.Position = [82 345 280 22];
+            app.CONFIGURACINDELAMEDICINLabel.Text = 'CONFIGURACIÓN DE LA MEDICIÓN';
+
+            % Create Label_20
+            app.Label_20 = uilabel(app.MedicionesPanel);
+            app.Label_20.FontName = 'Cambria';
+            app.Label_20.FontSize = 14;
+            app.Label_20.FontWeight = 'bold';
+            app.Label_20.FontColor = [0.0902 0.2314 0.4];
+            app.Label_20.Position = [29 312 361 22];
+            app.Label_20.Text = 'Distancia entre la fuente sonora y el micrófono (cm):';
+
+            % Create Label_21
+            app.Label_21 = uilabel(app.MedicionesPanel);
+            app.Label_21.Position = [32 267 530 22];
+            app.Label_21.Text = 'Realiza cinco mediciones por cada distancia y mantén constante el volumen de la fuente sonora.';
+
+            % Create DistanciaEditFieldLabel
+            app.DistanciaEditFieldLabel = uilabel(app.MedicionesPanel);
+            app.DistanciaEditFieldLabel.HorizontalAlignment = 'right';
+            app.DistanciaEditFieldLabel.WordWrap = 'on';
+            app.DistanciaEditFieldLabel.Position = [423 304 72 30];
+            app.DistanciaEditFieldLabel.Text = 'Indica aquí la distancia';
+
+            % Create DistanciaEditField
+            app.DistanciaEditField = uieditfield(app.MedicionesPanel, 'numeric');
+            app.DistanciaEditField.Limits = [10 500];
+            app.DistanciaEditField.RoundFractionalValues = 'on';
+            app.DistanciaEditField.Position = [507 304 100 30];
+            app.DistanciaEditField.Value = 50;
+
+            % Create ActivarMicrofonoButton
+            app.ActivarMicrofonoButton = uibutton(app.MedicionesPanel, 'push');
+            app.ActivarMicrofonoButton.ButtonPushedFcn = createCallbackFcn(app, @ActivarMicrofonoButtonPushed, true);
+            app.ActivarMicrofonoButton.BackgroundColor = [0.498 0.702 0.8902];
+            app.ActivarMicrofonoButton.FontWeight = 'bold';
+            app.ActivarMicrofonoButton.Position = [466 425 145 22];
+            app.ActivarMicrofonoButton.Text = 'ACTIVAR MICRÓFONO';
+
+            % Create EstadoMicrofonoLabel
+            app.EstadoMicrofonoLabel = uilabel(app.MedicionesPanel);
+            app.EstadoMicrofonoLabel.WordWrap = 'on';
+            app.EstadoMicrofonoLabel.FontSize = 14;
+            app.EstadoMicrofonoLabel.Position = [401 228 173 18];
+            app.EstadoMicrofonoLabel.Text = '● Micrófono desactivado';
+
+            % Create Label_22
+            app.Label_22 = uilabel(app.MedicionesPanel);
+            app.Label_22.WordWrap = 'on';
+            app.Label_22.Position = [31 218 344 30];
+            app.Label_22.Text = 'Presiona "ACTIVAR MICRÓFONO" y permite el acceso al dispositivo cuando MATLAB lo solicite.';
+
+            % Create REGISTRODERESULTADOSLabel
+            app.REGISTRODERESULTADOSLabel = uilabel(app.MedicionesPanel);
+            app.REGISTRODERESULTADOSLabel.FontName = 'Castellar';
+            app.REGISTRODERESULTADOSLabel.FontSize = 14;
+            app.REGISTRODERESULTADOSLabel.FontWeight = 'bold';
+            app.REGISTRODERESULTADOSLabel.Position = [82 175 209 22];
+            app.REGISTRODERESULTADOSLabel.Text = 'REGISTRO DE RESULTADOS';
+
+            % Create RegistrarMedicionButton
+            app.RegistrarMedicionButton = uibutton(app.MedicionesPanel, 'push');
+            app.RegistrarMedicionButton.ButtonPushedFcn = createCallbackFcn(app, @RegistrarMedicionButtonPushed, true);
+            app.RegistrarMedicionButton.BackgroundColor = [0.9412 0.902 0.6314];
+            app.RegistrarMedicionButton.Position = [423 134 148 22];
+            app.RegistrarMedicionButton.Text = 'REGISTRAR MEDICIÓN';
+
+            % Create MedicionesUITable
+            app.MedicionesUITable = uitable(app.MedicionesPanel);
+            app.MedicionesUITable.ColumnName = {'N.º de medición'; 'Distancia (cm)'; 'Nivel de señal'};
+            app.MedicionesUITable.RowName = {};
+            app.MedicionesUITable.Position = [45 18 305 150];
+
+            % Create Label_23
+            app.Label_23 = uilabel(app.MedicionesPanel);
+            app.Label_23.Position = [388 167 231 22];
+            app.Label_23.Text = 'Haga click aquí para registrar la medición ';
+
+            % Create VerResultadosButton
+            app.VerResultadosButton = uibutton(app.MedicionesPanel, 'push');
+            app.VerResultadosButton.ButtonPushedFcn = createCallbackFcn(app, @VerResultadosButtonPushed, true);
+            app.VerResultadosButton.BackgroundColor = [0.9412 0.902 0.6314];
+            app.VerResultadosButton.FontSize = 18;
+            app.VerResultadosButton.FontWeight = 'bold';
+            app.VerResultadosButton.Position = [459 27 145 30];
+            app.VerResultadosButton.Text = 'Ver Resultados';
+
+            % Create ResultadosPanel
+            app.ResultadosPanel = uipanel(app.UIFigure);
+            app.ResultadosPanel.Title = 'Resultados';
+            app.ResultadosPanel.Visible = 'off';
+            app.ResultadosPanel.BackgroundColor = [0.8902 0.949 0.9804];
+            app.ResultadosPanel.Position = [2 0 640 480];
+
+            % Create UIAxesMediciones
+            app.UIAxesMediciones = uiaxes(app.ResultadosPanel);
+            title(app.UIAxesMediciones, 'Title')
+            xlabel(app.UIAxesMediciones, 'X')
+            ylabel(app.UIAxesMediciones, 'Y')
+            zlabel(app.UIAxesMediciones, 'Z')
+            app.UIAxesMediciones.Position = [29 158 274 168];
+
+            % Create UIAxesTeorico
+            app.UIAxesTeorico = uiaxes(app.ResultadosPanel);
+            title(app.UIAxesTeorico, 'Title')
+            xlabel(app.UIAxesTeorico, 'X')
+            ylabel(app.UIAxesTeorico, 'Y')
+            zlabel(app.UIAxesTeorico, 'Z')
+            app.UIAxesTeorico.Position = [349 152 270 174];
+
+            % Create ResultadosLabel
+            app.ResultadosLabel = uilabel(app.ResultadosPanel);
+            app.ResultadosLabel.FontName = 'Care Around';
+            app.ResultadosLabel.FontSize = 36;
+            app.ResultadosLabel.Position = [254 396 147 46];
+            app.ResultadosLabel.Text = 'Resultados';
+
+            % Create Label_24
+            app.Label_24 = uilabel(app.ResultadosPanel);
+            app.Label_24.FontSize = 14;
+            app.Label_24.Position = [62 355 398 22];
+            app.Label_24.Text = 'Aquí encuentras tus resultados y los teóricos del experimentó ';
+
+            % Create RepetirexperimentButton
+            app.RepetirexperimentButton = uibutton(app.ResultadosPanel, 'push');
+            app.RepetirexperimentButton.BackgroundColor = [0.949 0.902 0.6];
+            app.RepetirexperimentButton.FontName = 'Constantia';
+            app.RepetirexperimentButton.FontSize = 18;
+            app.RepetirexperimentButton.FontWeight = 'bold';
+            app.RepetirexperimentButton.Position = [74 49 195 33];
+            app.RepetirexperimentButton.Text = 'Repetir experimentó ';
+
+            % Create VolveralmenButton
+            app.VolveralmenButton = uibutton(app.ResultadosPanel, 'push');
+            app.VolveralmenButton.ButtonPushedFcn = createCallbackFcn(app, @VolveralmenButtonPushed, true);
+            app.VolveralmenButton.BackgroundColor = [0.949 0.902 0.6];
+            app.VolveralmenButton.FontName = 'Constantia';
+            app.VolveralmenButton.FontSize = 18;
+            app.VolveralmenButton.FontWeight = 'bold';
+            app.VolveralmenButton.Position = [410 49 156 34];
+            app.VolveralmenButton.Text = 'Volver al menú ';
+
+            % Create FrecuenciaPanel
+            app.FrecuenciaPanel = uipanel(app.UIFigure);
+            app.FrecuenciaPanel.Title = 'Frecuencia y Ondas';
+            app.FrecuenciaPanel.BackgroundColor = [0.9608 0.949 0.6588];
+            app.FrecuenciaPanel.Position = [2 2 639 479];
+
+            % Create Experimento2Label
+            app.Experimento2Label = uilabel(app.FrecuenciaPanel);
+            app.Experimento2Label.FontName = 'Care Around';
+            app.Experimento2Label.FontSize = 24;
+            app.Experimento2Label.Position = [156 410 334 31];
+            app.Experimento2Label.Text = 'Experimento 2 ·  Frecuencia y ondas ';
+
+            % Create Label_26
+            app.Label_26 = uilabel(app.FrecuenciaPanel);
+            app.Label_26.WordWrap = 'on';
+            app.Label_26.Position = [41 371 558 30];
+            app.Label_26.Text = 'Analiza cómo se comportan las ondas sonoras y su frecuencia fundamental (Hz) mediante la captura de tonos y señales acústicas.';
+
+            % Create Label_27
+            app.Label_27 = uilabel(app.FrecuenciaPanel);
+            app.Label_27.WordWrap = 'on';
+            app.Label_27.FontSize = 13;
+            app.Label_27.Position = [43 307 569 32];
+            app.Label_27.Text = 'El sonido es una onda que se propaga repitiéndose en ciclos. La forma en que percibimos e identificamos un tono depende de la relación matemática entre dos variables clave.';
+
+            % Create Label_28
+            app.Label_28 = uilabel(app.FrecuenciaPanel);
+            app.Label_28.FontName = 'Constantia';
+            app.Label_28.FontSize = 18;
+            app.Label_28.FontWeight = 'bold';
+            app.Label_28.Position = [125 344 387 24];
+            app.Label_28.Text = {'¿Cómo se comportan las ondas en el tiempo?'; ''};
+
+            % Create Label_29
+            app.Label_29 = uilabel(app.FrecuenciaPanel);
+            app.Label_29.WordWrap = 'on';
+            app.Label_29.FontWeight = 'bold';
+            app.Label_29.Position = [114 245 426 30];
+            app.Label_29.Text = 'Periodo (T): El tiempo que tarda la onda en completar un ciclo utilizando la relación inversa (T = 1/f).';
+
+            % Create Image7
+            app.Image7 = uiimage(app.FrecuenciaPanel);
+            app.Image7.Position = [54 238 37 47];
+            app.Image7.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-09 221106.png');
+
+            % Create Image8
+            app.Image8 = uiimage(app.FrecuenciaPanel);
+            app.Image8.Position = [55 182 35 51];
+            app.Image8.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-06 003107.png');
+
+            % Create Label_30
+            app.Label_30 = uilabel(app.FrecuenciaPanel);
+            app.Label_30.WordWrap = 'on';
+            app.Label_30.FontWeight = 'bold';
+            app.Label_30.Position = [113 194 475 30];
+            app.Label_30.Text = 'Frecuencia (f): Los ciclos por segundo medidos en Hertz (Hz) de la señal capturada.';
+
+            % Create LoquecalcularemosLabel
+            app.LoquecalcularemosLabel = uilabel(app.FrecuenciaPanel);
+            app.LoquecalcularemosLabel.FontName = 'Constantia';
+            app.LoquecalcularemosLabel.FontSize = 14;
+            app.LoquecalcularemosLabel.FontWeight = 'bold';
+            app.LoquecalcularemosLabel.Position = [111 282 144 22];
+            app.LoquecalcularemosLabel.Text = 'Lo que calcularemos:';
+
+            % Create Label_31
+            app.Label_31 = uilabel(app.FrecuenciaPanel);
+            app.Label_31.WordWrap = 'on';
+            app.Label_31.FontName = 'Constantia';
+            app.Label_31.FontSize = 14;
+            app.Label_31.Position = [45 126 454 52];
+            app.Label_31.Text = 'Antes de comenzar, reflexiona y escribe: ¿Qué pasará con la frecuencia y el gráfico si emites un sonido más agudo o más grave frente al micrófono?';
+
+            % Create EscribeaquTextArea_2Label
+            app.EscribeaquTextArea_2Label = uilabel(app.FrecuenciaPanel);
+            app.EscribeaquTextArea_2Label.HorizontalAlignment = 'right';
+            app.EscribeaquTextArea_2Label.WordWrap = 'on';
+            app.EscribeaquTextArea_2Label.FontName = 'Arial';
+            app.EscribeaquTextArea_2Label.Position = [49 77 42 30];
+            app.EscribeaquTextArea_2Label.Text = 'Escribe aquí ';
+
+            % Create EscribeaquTextArea_2
+            app.EscribeaquTextArea_2 = uitextarea(app.FrecuenciaPanel);
+            app.EscribeaquTextArea_2.FontName = 'Arial';
+            app.EscribeaquTextArea_2.Position = [112 55 374 60];
+
+            % Create Image9
+            app.Image9 = uiimage(app.FrecuenciaPanel);
+            app.Image9.Position = [504 58 107 103];
+            app.Image9.ImageSource = fullfile(pathToMLAPP, 'Captura de pantalla 2026-11-08 131034.png');
+
+            % Create ComenzarButton
+            app.ComenzarButton = uibutton(app.FrecuenciaPanel, 'push');
+            app.ComenzarButton.VerticalAlignment = 'top';
+            app.ComenzarButton.BackgroundColor = [0.5176 0.6118 0.8118];
+            app.ComenzarButton.FontName = 'Cambria';
+            app.ComenzarButton.FontSize = 20;
+            app.ComenzarButton.Position = [470 11 109 31];
+            app.ComenzarButton.Text = 'Comenzar';
+
+            % Create PanelExperimento
+            app.PanelExperimento = uipanel(app.UIFigure);
+            app.PanelExperimento.Title = 'PanelExperimento';
+            app.PanelExperimento.BackgroundColor = [0.9608 0.949 0.6588];
+            app.PanelExperimento.Position = [2 2 639 479];
+
+            % Create Label_32
+            app.Label_32 = uilabel(app.PanelExperimento);
+            app.Label_32.FontName = 'Care Around';
+            app.Label_32.FontSize = 18;
+            app.Label_32.Position = [69 419 275 22];
+            app.Label_32.Text = 'REGISTRO Y ANÁLISIS DE FRECUENCIA';
+
+            % Create VolverButton
+            app.VolverButton = uibutton(app.PanelExperimento, 'push');
+            app.VolverButton.Position = [41 17 108 22];
+            app.VolverButton.Text = 'Volver a la teoría ';
+
+            % Create Label_33
+            app.Label_33 = uilabel(app.PanelExperimento);
+            app.Label_33.WordWrap = 'on';
+            app.Label_33.FontSize = 13;
+            app.Label_33.FontWeight = 'bold';
+            app.Label_33.Position = [52 356 552 48];
+            app.Label_33.Text = 'Instrucciones: Emite un sonido constante frente al micrófono (un silbido, una nota sostenida o un tono fijo). Presiona el botón de captura para registrar la frecuencia y repítelo 5 veces';
+
+            % Create CapturarTonoButton
+            app.CapturarTonoButton = uibutton(app.PanelExperimento, 'push');
+            app.CapturarTonoButton.BackgroundColor = [0.4745 0.7294 0.9098];
+            app.CapturarTonoButton.Position = [405 312 188 22];
+            app.CapturarTonoButton.Text = '🎙️ CAPTURAR TONO (MEDIR)';
+
+            % Create UITable
+            app.UITable = uitable(app.PanelExperimento);
+            app.UITable.ColumnName = {'N° de repeticiones'; 'Frecuencia (Hz)'; 'Periodo T (ms'};
+            app.UITable.RowName = {};
+            app.UITable.Position = [35 146 331 185];
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = AulaSound
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            % Execute the startup function
+            runStartupFcn(app, @startupFcn2)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end
