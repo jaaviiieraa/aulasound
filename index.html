@@ -1,1 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AulaSound - Laboratorio Virtual de Física Acústica</title>
+    <!-- Tailwind CSS para un diseño moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
 
+    <!-- Navbar Superior -->
+    <header class="glass border-b border-gray-800 px-6 py-4 flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold">🔊</div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide text-white">AulaSound <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">EXPERIMENTO 01</span></h1>
+                <p class="text-xs text-gray-400">Laboratorio Virtual de Física Acústica</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button onclick="cambiarSeccion('menu')" class="text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg transition">🏠 Menú Principal</button>
+            <button onclick="abrirTutorial()" class="text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">💡 Tutorial</button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full">
+
+        <!-- MENÚ PRINCIPAL -->
+        <section id="vista-menu" class="space-y-6">
+            <div class="glass p-8 rounded-2xl text-center space-y-4">
+                <h2 class="text-3xl font-extrabold text-white">Bienvenido al Entorno Experimental AulaSound</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Selecciona el módulo de experimentación acústica que deseas realizar para comenzar el registro de datos, análisis en tiempo real y validación teórica.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                    <div onclick="cambiarSeccion('experimento')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-2 group">
+                        <span class="text-indigo-400 text-2xl">📈</span>
+                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">1. Frecuencia y Tono</h3>
+                        <p class="text-xs text-gray-400">Osciloscopio interactivo y Transformada Rápida de Fourier (FFT).</p>
+                    </div>
+                    <div onclick="cambiarSeccion('experimento')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-2 group">
+                        <span class="text-indigo-400 text-2xl">🏛️</span>
+                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">2. Acústica de Salas</h3>
+                        <p class="text-xs text-gray-400">Medición de niveles de presión sonora (dB) y reflexiones.</p>
+                    </div>
+                    <div onclick="cambiarSeccion('experimento')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-2 group">
+                        <span class="text-indigo-400 text-2xl">📏</span>
+                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">3. Propagación Sonora</h3>
+                        <p class="text-xs text-gray-400">Estudio de la ley del inverso del cuadrado con distancia.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA DE EXPERIMENTO -->
+        <section id="vista-experimento" class="hidden space-y-6">
+            <!-- Gráficos Superiores -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Osciloscopio -->
+                <div class="glass p-4 rounded-xl lg:col-span-2 space-y-3">
+                    <div class="flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 pb-2">
+                        <span class="font-semibold text-gray-200">OSCILOSCOPIO (TIEMPO)</span>
+                        <span>Amplitud / Tiempo</span>
+                    </div>
+                    <div class="h-48 flex items-center justify-center">
+                        <canvas id="graficoOsciloscopio"></canvas>
+                    </div>
+                </div>
+                <!-- Espectro FFT -->
+                <div class="glass p-4 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 pb-2">
+                        <span class="font-semibold text-gray-200">ESPECTRO FFT (FRECUENCIA)</span>
+                        <span class="text-emerald-400">Pico: 440.0 Hz</span>
+                    </div>
+                    <div class="h-48 flex items-center justify-center">
+                        <canvas id="graficoFFT"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Control y Registro -->
+            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-400">
+                    Capture 5 repeticiones consecutivas para completar la tabla experimental.
+                </div>
+                <button onclick="registrarMedicion()" id="btnRegistrar" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium transition flex items-center gap-2 shadow-lg shadow-indigo-600/30">
+                    <span>📌</span> REGISTRAR MEDICIÓN (N° <span id="contadorRep">1</span>/5)
+                </button>
+            </div>
+
+            <!-- Tabla de Repeticiones -->
+            <div class="glass rounded-xl overflow-hidden">
+                <div class="p-4 border-b border-gray-800 flex justify-between items-center">
+                    <h3 class="font-bold text-sm text-white">TABLA DE REPETICIONES</h3>
+                    <button onclick="limpiarTabla()" class="text-xs text-red-400 hover:underline">Limpiar Tabla</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase">
+                            <tr>
+                                <th class="p-3">N°</th>
+                                <th class="p-3">Distancia / cm</th>
+                                <th class="p-3">Presión Sonora (dB)</th>
+                                <th class="p-3 text-right">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoTabla" class="divide-y divide-gray-800 text-gray-300">
+                            <tr>
+                                <td class="p-3 font-medium">1</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-right text-gray-500">Pendiente</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">2</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-right text-gray-500">Pendiente</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">3</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-right text-gray-500">Pendiente</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">4</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-right text-gray-500">Pendiente</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">5</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-gray-500">-----</td>
+                                <td class="p-3 text-right text-gray-500">Pendiente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Resumen Estadístico y Gráfico Comparativo -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="glass p-5 rounded-xl space-y-4">
+                    <h4 class="font-bold text-sm text-white">HIPÓTESIS PLANTEADA</h4>
+                    <div class="bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs text-gray-400">
+                        ¿Se seguirá la hipótesis en Fase II de atenuación lineal en campo libre?
+                    </div>
+                    <div class="pt-2">
+                        <span class="text-xs text-gray-400">ESTADÍSTICAS DE MEDICIONES</span>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xl font-bold text-indigo-400">72.00 dB</span>
+                            <span class="text-sm font-semibold text-emerald-400">± 3.63 dB</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 mt-1">Promedio empírico y Desviación estándar</p>
+                    </div>
+                </div>
+
+                <div class="glass p-5 rounded-xl lg:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-sm text-white">Gráfico Comparativo: Teórico vs. Empírico (5 Repeticiones)</h4>
+                        <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-500/30">Análisis Gráfico</span>
+                    </div>
+                    <div class="h-44 flex items-center justify-center">
+                        <canvas id="graficoComparativo"></canvas>
+                    </div>
+                    <div class="flex justify-between items-center pt-2">
+                        <button onclick="alert('Informe CSV exportado con éxito.')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+                            📄 Exportar Informe CSV
+                        </button>
+                        <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">
+                            Volver al Menú Principal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Tutorial -->
+    <div id="modalTutorial" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass max-w-lg w-full p-6 rounded-2xl space-y-6 relative border border-gray-700">
+            <button onclick="cerrarTutorial()" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+            <div id="paso1" class="space-y-4">
+                <div class="bg-indigo-600/20 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 text-xl font-bold border border-indigo-500/30">🔊</div>
+                <h3 class="text-xl font-bold text-white">¡Bienvenido a AulaSound!</h3>
+                <p class="text-sm text-gray-300 leading-relaxed">Laboratorio interactivo de acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.</p>
+                <div class="bg-indigo-500/10 border border-indigo-500/20 p-3 rounded-lg text-xs text-indigo-300">
+                    ✨ <b>Módulo científico interactivo:</b> Plantea tus hipótesis, realiza 5 mediciones guiadas y compara resultados con gráficos analíticos.
+                </div>
+            </div>
+            <div class="flex justify-between items-center pt-4 border-t border-gray-800">
+                <button onclick="cerrarTutorial()" class="text-xs text-gray-400 hover:text-white">Saltar Tutorial</button>
+                <button onclick="avanzarPaso()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-xl font-medium transition">Siguiente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Interacción y Gráficos -->
+    <script>
+        let repActual = 1;
+        let datosTabla = [
+            { d: 50, db: 74.2 },
+            { d: 100, db: 68.5 },
+            { d: 150, db: 64.1 },
+            { d: 200, db: 60.8 },
+            { d: 250, db: 58.0 }
+        ];
+
+        function cambiarSeccion(seccion) {
+            if(seccion === 'menu') {
+                document.getElementById('vista-menu').classList.remove('hidden');
+                document.getElementById('vista-experimento').classList.add('hidden');
+            } else {
+                document.getElementById('vista-menu').classList.add('hidden');
+                document.getElementById('vista-experimento').classList.remove('hidden');
+                inicializarGraficos();
+            }
+        }
+
+        function abrirTutorial() { document.getElementById('modalTutorial').classList.remove('hidden'); }
+        function cerrarTutorial() { document.getElementById('modalTutorial').classList.add('hidden'); }
+        function avanzarPaso() { cerrarTutorial(); }
+
+        function registrarMedicion() {
+            if(repActual <= 5) {
+                const fila = document.getElementById('cuerpoTabla').rows[repActual - 1];
+                fila.cells[1].innerText = datosTabla[repActual-1].d;
+                fila.cells[2].innerText = datosTabla[repActual-1].db + " dB";
+                fila.cells[3].innerText = "Registrado";
+                fila.cells[3].className = "p-3 text-right text-emerald-400 font-medium";
+                
+                repActual++;
+                if(repActual <= 5) {
+                    document.getElementById('contadorRep').innerText = repActual;
+                } else {
+                    document.getElementById('btnRegistrar').innerText = "¡Completado!";
+                    document.getElementById('btnRegistrar').disabled = true;
+                    document.getElementById('btnRegistrar').classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function limpiarTabla() {
+            repActual = 1;
+            document.getElementById('contadorRep').innerText = 1;
+            const btn = document.getElementById('btnRegistrar');
+            btn.innerText = "📌 REGISTRAR MEDICIÓN (N° 1/5)";
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            const tbody = document.getElementById('cuerpoTabla');
+            for(let i=0; i<5; i++) {
+                tbody.rows[i].cells[1].innerText = "-----";
+                tbody.rows[i].cells[2].innerText = "-----";
+                tbody.rows[i].cells[3].innerText = "Pendiente";
+                tbody.rows[i].cells[3].className = "p-3 text-right text-gray-500";
+            }
+        }
+
+        function inicializarGraficos() {
+            // Osciloscopio
+            const ctxOsc = document.getElementById('graficoOsciloscopio').getContext('2d');
+            new Chart(ctxOsc, {
+                type: 'line',
+                data: {
+                    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    datasets: [{
+                        data: [0, 1.2, 0.8, -1, -0.5, 1.1, 0.7, -1.2, -0.3, 0],
+                        borderColor: '#6366f1',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+            });
+
+            // FFT
+            const ctxFFT = document.getElementById('graficoFFT').getContext('2d');
+            new Chart(ctxFFT, {
+                type: 'bar',
+                data: {
+                    labels: ['100Hz', '200Hz', '440Hz', '800Hz', '1kHz'],
+                    datasets: [{
+                        data: [15, 30, 85, 40, 20],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { display: false } } }
+            });
+
+            // Comparativo
+            const ctxComp = document.getElementById('graficoComparativo').getContext('2d');
+            new Chart(ctxComp, {
+                type: 'bar',
+                data: {
+                    labels: ['Medición 1', 'Medición 2', 'Medición 3', 'Medición 4', 'Medición 5'],
+                    datasets: [
+                        { label: 'Empírico (Acústica)', data: [74.2, 68.5, 64.1, 60.8, 58.0], backgroundColor: '#3b82f6', borderRadius: 4 },
+                        { label: 'Teórico / Referencia', data: [74, 68, 64, 60, 57], backgroundColor: '#6366f1', borderRadius: 4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af' } }, y: { ticks: { color: '#9ca3af' } } } }
+            });
+        }
+    </script>
+</body>
+</html>
