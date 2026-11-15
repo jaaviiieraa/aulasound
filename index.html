@@ -268,8 +268,19 @@
     <script>
         let pasoTutorial = 1;
         let microfonoActivo = false;
-        let audioContext, analyser, dataArray;
+        let audioContext, analyser;
         let chartOsc;
+        let frecuenciaDetectada = 0;
+        let tipoOndaActual = "En reposo";
+        let contadorCapturas = 0;
+        let listaCapturas = [];
+        let chartPropagacion;
+        let listaMediciones = [
+            { id: 1, dist: 50, senal: 2.50 },
+            { id: 2, dist: 100, senal: 1.20 },
+            { id: 3, dist: 150, senal: 0.80 },
+            { id: 4, dist: 200, senal: 0.60 }
+        ];
 
         function abrirTutorial() {
             pasoTutorial = 1;
@@ -292,12 +303,12 @@
             pasoTutorial++;
             if(pasoTutorial === 2) {
                 document.getElementById('modalTitulo').innerText = "Estructura de las Experiencias";
-                document.getElementById('modalTexto').innerText = "Cada módulo sigue un flujo estructurado de análisis riguroso:";
+                document.getElementById('modalTexto').innerText = "Cada módulo sigue un flujo estructurado de análisis riguroso y validación teórica.";
                 document.getElementById('modalCajaExtra').innerHTML = `
                     <div class='space-y-1.5 text-xs'>
                         <div><b>1. Teoría e Hipótesis:</b> Contexto y fundamentos físicos.</div>
-                        <div><b>2. Visualización en Vivo:</b> Análisis en el osciloscopio.</div>
-                        <div><b>3. Validación:</b> Contraste empírico.</div>
+                        <div><b>2. Visualización:</b> Análisis en vivo y ley del inverso del cuadrado.</div>
+                        <div><b>3. Validación:</b> Gráficos comparativos con colores diferenciados.</div>
                     </div>`;
             } else if(pasoTutorial === 3) {
                 document.getElementById('modalTitulo').innerText = "Herramientas de Audio Integradas";
@@ -330,17 +341,11 @@
                 
                 const banner = document.getElementById('bannerPermisoExp');
                 if(banner) banner.classList.add('hidden');
-                
-                const estadoOsc = document.getElementById('estadoCapturaOsc');
-                if(estadoOsc) {
-                    estadoOsc.innerText = "● Capturando onda en vivo";
-                    estadoOsc.className = "text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-medium";
-                }
 
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioContext.createMediaStreamSource(stream);
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 512;
+                analyser.fftSize = 1024;
                 source.connect(analyser);
 
                 if (!document.getElementById('vista-experimento').classList.contains('hidden')) {
@@ -356,12 +361,17 @@
             document.getElementById('nombre-experimento-activo').innerText = nombre;
             cambiarSeccion('experimento');
             
+            // Si es el experimento 3, renderizamos su tabla y gráfico
+            if (num === 3) {
+                renderizarTablaYGrafico();
+            }
+
             if (!microfonoActivo) {
                 document.getElementById('bannerPermisoExp').classList.remove('hidden');
                 document.getElementById('modalMicrofono').classList.remove('hidden');
             } else {
                 document.getElementById('bannerPermisoExp').classList.add('hidden');
-                iniciarBucleAudioEnVivo();
+                if(num === 1) iniciarBucleAudioEnVivo();
             }
         }
 
@@ -377,13 +387,13 @@
             }
         }
 
-        function reproducirTonoPrueba() {
+        function reproducirTonoPrueba(freq) {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.value = 440;
+                osc.frequency.value = freq;
                 gain.gain.setValueAtTime(0.15, ctx.currentTime);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
@@ -395,13 +405,15 @@
         function inicializarGraficoOsciloscopio() {
             if(chartOsc) chartOsc.destroy();
 
-            const ctxOsc = document.getElementById('graficoOsciloscopio').getContext('2d');
-            chartOsc = new Chart(ctxOsc, {
+            const ctxOsc = document.getElementById('graficoOsciloscopio');
+            if(!ctxOsc) return;
+
+            chartOsc = new Chart(ctxOsc.getContext('2d'), {
                 type: 'line',
                 data: { 
-                    labels: Array.from({length: 60}, (_, i) => i), 
+                    labels: Array.from({length: 90}, (_, i) => i), 
                     datasets: [{ 
-                        data: Array(60).fill(0), 
+                        data: Array(90).fill(0), 
                         borderColor: '#6366f1', 
                         borderWidth: 2.5, 
                         tension: 0.35, 
@@ -415,7 +427,7 @@
                     plugins: { legend: { display: false } }, 
                     scales: { 
                         x: { display: false }, 
-                        y: { min: -1, max: 1, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } } 
+                        y: { min: -1, max: 1, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#9ca3af' } } 
                     } 
                 }
             });
@@ -424,17 +436,60 @@
         }
 
         function iniciarBucleAudioEnVivo() {
-            if(!microfonoActivo || !analyser) return;
+            if(!microfonoActivo || !analyser || !audioContext) return;
             const timeData = new Uint8Array(analyser.fftSize);
+            const freqData = new Uint8Array(analyser.frequencyBinCount);
+            const sampleRate = audioContext.sampleRate;
             
             function actualizar() {
                 if(document.getElementById('vista-experimento').classList.contains('hidden')) return;
                 
                 analyser.getByteTimeDomainData(timeData);
-                const ondaNormalizada = Array.from(timeData.slice(0, 60)).map(v => (v - 128) / 128);
+                const ondaNormalizada = Array.from(timeData.slice(0, 90)).map(v => (v - 128) / 128);
                 
+                analyser.getByteFrequencyData(freqData);
+                let maxVal = -1;
+                let maxIndex = -1;
+                for(let i = 1; i < freqData.length; i++) {
+                    if(freqData[i] > maxVal) {
+                        maxVal = freqData[i];
+                        maxIndex = i;
+                    }
+                }
+
+                const etiqueta = document.getElementById('etiquetaTipoOnda');
+                const badgeFreq = document.getElementById('frecuenciaActualBadge');
+                let colorLinea = '#6366f1';
+
+                if(etiqueta && badgeFreq && maxVal > 45) {
+                    frecuenciaDetectada = Math.round(maxIndex * (sampleRate / analyser.fftSize));
+                    badgeFreq.innerText = `${frecuenciaDetectada} Hz`;
+
+                    if(frecuenciaDetectada < 380) {
+                        colorLinea = '#ef4444';
+                        tipoOndaActual = "Onda Grave (Roja)";
+                        etiqueta.innerText = "🔴 Onda Grave";
+                        etiqueta.className = "text-[11px] bg-red-500/20 text-red-400 px-2.5 py-0.5 rounded-full border border-red-500/30 font-medium";
+                    } else if(frecuenciaDetectada > 950) {
+                        colorLinea = '#3b82f6';
+                        tipoOndaActual = "Onda Aguda (Azul)";
+                        etiqueta.innerText = "🔵 Onda Aguda";
+                        etiqueta.className = "text-[11px] bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30 font-medium";
+                    } else {
+                        colorLinea = '#8b5cf6';
+                        tipoOndaActual = "Onda Media (Violeta)";
+                        etiqueta.innerText = "🟣 Frecuencia Media";
+                        etiqueta.className = "text-[11px] bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30 font-medium";
+                    }
+                } else if(badgeFreq && etiqueta) {
+                    badgeFreq.innerText = "Silencio";
+                    etiqueta.innerText = "En espera de sonido...";
+                    etiqueta.className = "text-[11px] bg-gray-800 text-gray-400 px-2.5 py-0.5 rounded-full border border-gray-700";
+                }
+
                 if(chartOsc) {
                     chartOsc.data.datasets[0].data = ondaNormalizada;
+                    chartOsc.data.datasets[0].borderColor = colorLinea;
                     chartOsc.update();
                 }
 
@@ -442,6 +497,193 @@
             }
             actualizar();
         }
+
+        function capturarGraficoOnda() {
+            if(!chartOsc) return;
+            contadorCapturas++;
+            
+            const sinCap = document.getElementById('sinCapturasMsg');
+            const btnLimpiar = document.getElementById('btnLimpiarCapturas');
+            const secConc = document.getElementById('seccionConclusion');
+            if(sinCap) sinCap.classList.add('hidden');
+            if(btnLimpiar) btnLimpiar.classList.remove('hidden');
+            if(secConc) secConc.classList.remove('hidden');
+
+            const imagenURL = chartOsc.toBase64Image();
+            const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const freqTexto = frecuenciaDetectada > 0 ? `${frecuenciaDetectada} Hz` : "Sin señal";
+
+            listaCapturas.push(tipoOndaActual);
+
+            let badgeColor = "bg-indigo-500/20 text-indigo-300 border-indigo-500/30";
+            if(tipoOndaActual.includes("Grave")) badgeColor = "bg-red-500/20 text-red-400 border-red-500/30";
+            if(tipoOndaActual.includes("Aguda")) badgeColor = "bg-blue-500/20 text-blue-400 border-blue-500/30";
+
+            const tarjeta = document.createElement('div');
+            tarjeta.className = "bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-2.5 shadow-md";
+            tarjeta.innerHTML = `
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-white">Captura #${contadorCapturas}</span>
+                    <span class="text-[10px] text-gray-400">${hora}</span>
+                </div>
+                <div class="bg-[#0b0f19] rounded-lg p-2 border border-gray-800/80">
+                    <img src="${imagenURL}" alt="Captura de onda" class="w-full h-28 object-contain">
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-[10px] px-2 py-0.5 rounded-full border ${badgeColor}">${tipoOndaActual}</span>
+                    <span class="text-xs font-mono font-semibold text-gray-300">${freqTexto}</span>
+                </div>
+            `;
+
+            const contenedor = document.getElementById('contenedorCapturas');
+            if(contenedor) contenedor.prepend(tarjeta);
+            actualizarConclusionDinamica();
+        }
+
+        function actualizarConclusionDinamica() {
+            const txt = document.getElementById('textoConclusion');
+            if(!txt) return;
+            let hasGrave = listaCapturas.some(c => c.includes("Grave"));
+            let hasAguda = listaCapturas.some(c => c.includes("Aguda"));
+
+            if (hasGrave && hasAguda) {
+                txt.innerHTML = `✅ <b>Análisis completado con éxito:</b> Como se puede observar al comparar las imágenes capturadas en la galería, existe una diferencia evidente en el comportamiento espacial y temporal de las ondas. La <b>onda grave (marcada en rojo)</b> presenta crestas y valles amplios con un período largo (baja frecuencia). En contraste, la <b>onda aguda (marcada en azul)</b> muestra crestas y valles altamente comprimidos y densos en el eje temporal (alta frecuencia). Esto valida empíricamente la relación inversa entre el período y la frecuencia perceptual del tono.`;
+            } else if (hasGrave) {
+                txt.innerHTML = `📌 <b>Captura registrada (${contadorCapturas}):</b> Has registrado una onda de baja frecuencia (Grave). Se observa una menor densidad de ciclos por unidad de tiempo. <em>Prueba ahora emitiendo un sonido agudo o usando el botón azul para comparar las diferencias.</em>`;
+            } else if (hasAguda) {
+                txt.innerHTML = `📌 <b>Captura registrada (${contadorCapturas}):</b> Has registrado una onda de alta frecuencia (Aguda). Se observa una compresión temporal evidente. <em>Prueba ahora emitiendo un sonido grave para completar la contrastación visual.</em>`;
+            } else {
+                txt.innerHTML = `Analiza las capturas anteriores para contrastar la diferencia visual entre frecuencias graves y agudas.`;
+            }
+        }
+
+        function limpiarCapturas() {
+            contadorCapturas = 0;
+            listaCapturas = [];
+            const cont = document.getElementById('contenedorCapturas');
+            const sinCap = document.getElementById('sinCapturasMsg');
+            const btnLimpiar = document.getElementById('btnLimpiarCapturas');
+            const secConc = document.getElementById('seccionConclusion');
+            if(cont) cont.innerHTML = "";
+            if(sinCap) sinCap.classList.remove('hidden');
+            if(btnLimpiar) btnLimpiar.classList.add('hidden');
+            if(secConc) secConc.classList.add('hidden');
+        }
+
+        // Funciones del Experimento 3 (Propagación del Sonido)
+        function agregarMedicionPersonalizada() {
+            const inputDist = document.getElementById('inputDistancia');
+            const inputSenal = document.getElementById('inputSenal');
+            if(!inputDist || !inputSenal) return;
+
+            const dist = parseFloat(inputDist.value);
+            const senal = parseFloat(inputSenal.value);
+
+            if(isNaN(dist) || isNaN(senal) || dist <= 0) {
+                alert("Por favor ingresa valores válidos para distancia y señal.");
+                return;
+            }
+
+            const nuevoId = listaMediciones.length + 1;
+            listaMediciones.push({ id: nuevoId, dist: dist, senal: senal });
+            listaMediciones.sort((a, b) => a.dist - b.dist);
+
+            renderizarTablaYGrafico();
+        }
+
+        function eliminarMedicion(id) {
+            listaMediciones = listaMediciones.filter(m => m.id !== id);
+            renderizarTablaYGrafico();
+        }
+
+        function reiniciarTabla() {
+            listaMediciones = [
+                { id: 1, dist: 50, senal: 2.50 },
+                { id: 2, dist: 100, senal: 1.20 }
+            ];
+            renderizarTablaYGrafico();
+        }
+
+        function renderizarTablaYGrafico() {
+            const tbody = document.getElementById('cuerpoTablaPropagacion');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            const d0 = listaMediciones.length > 0 ? listaMediciones[0].dist : 50;
+            const I0 = listaMediciones.length > 0 ? listaMediciones[0].senal : 2.50;
+
+            let labelsDistancias = [];
+            let datosEmpiricos = [];
+            let datosTeoricos = [];
+
+            listaMediciones.forEach((med, index) => {
+                const valorTeorico = (I0 * Math.pow(d0 / med.dist, 2)).toFixed(2);
+
+                labelsDistancias.push(`${med.dist} cm`);
+                datosEmpiricos.push(med.senal);
+                datosTeoricos.push(valorTeorico);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-medium">Punto #${index + 1}</td>
+                    <td class="p-3 font-semibold text-amber-300">${med.dist} cm</td>
+                    <td class="p-3 text-blue-400 font-bold">${med.senal}</td>
+                    <td class="p-3 text-red-400 font-bold">${valorTeorico}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="eliminarMedicion(${med.id})" class="text-red-400 hover:text-red-300">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            actualizarGraficoPropagacion(labelsDistancias, datosEmpiricos, datosTeoricos);
+        }
+
+        function actualizarGraficoPropagacion(labels, empirico, teorico) {
+            const ctxElem = document.getElementById('graficoPropagacion');
+            if(!ctxElem) return;
+
+            if(chartPropagacion) chartPropagacion.destroy();
+
+            chartPropagacion = new Chart(ctxElem.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Datos Empíricos (Alumno)',
+                            data: empirico,
+                            borderColor: '#3b82f6', // Azul eléctrico fuerte
+                            backgroundColor: '#3b82f6',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            tension: 0.2
+                        },
+                        {
+                            label: 'Curva Teórica (Inverso Cuadrado)',
+                            data: teorico,
+                            borderColor: '#ef4444', // Rojo intenso fuerte
+                            backgroundColor: '#ef4444',
+                            borderWidth: 3,
+                            borderDash: [5, 5],
+                            pointRadius: 4,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#f3f4f6', font: { size: 11 } } }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                    }
+                }
+            });
+        } 
     </script>
 </body>
 </html>
