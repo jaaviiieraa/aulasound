@@ -79,7 +79,7 @@
             </div>
         </section>
 
-        <!-- VISTA DE EXPERIMENTO 1: FRECUENCIA Y ONDAS -->
+       <!-- VISTA DE EXPERIMENTO 3: PROPAGACIÓN DEL SONIDO -->
         <section id="vista-experimento" class="hidden space-y-6">
             
             <!-- Aviso de Permiso de Micrófono -->
@@ -87,8 +87,8 @@
                 <div class="flex items-center gap-3">
                     <span class="text-xl">🎙️</span>
                     <div>
-                        <h4 class="text-sm font-bold text-amber-300">Se requiere acceso al micrófono para visualizar las ondas</h4>
-                        <p class="text-xs text-gray-300">Activa el sensor de audio para ver la respuesta del osciloscopio en tiempo real.</p>
+                        <h4 class="text-sm font-bold text-amber-300">Se requiere acceso al micrófono para el laboratorio</h4>
+                        <p class="text-xs text-gray-300">Activa el sensor de audio para capturar el nivel de señal al alejarte de la fuente.</p>
                     </div>
                 </div>
                 <button onclick="solicitarPermisoMicrofono()" class="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">
@@ -99,70 +99,121 @@
             <!-- Cabecera del Módulo -->
             <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
-                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento 1: Frecuencia y Ondas</h3>
-                    <p class="text-xs text-gray-400">Visualización interactiva de ondas sonoras, tono y percepción.</p>
+                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento 3: Propagación del Sonido y Distancia</h3>
+                    <p class="text-xs text-gray-400">Estudio experimental de la atenuación geométrica del sonido.</p>
                 </div>
-                <div class="bg-gray-900/80 px-4 py-2.5 rounded-xl border border-gray-800 flex items-center gap-3">
-                    <span class="text-xs text-indigo-400 font-medium">🎵 Generador de Test:</span>
-                    <button onclick="reproducirTonoPrueba()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition">🔊 Tono 440Hz (La)</button>
-                </div>
+                <button onclick="cambiarSeccion('menu')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg transition">🏠 Volver al Menú</button>
             </div>
 
-            <!-- CONTENIDO TEÓRICO Y GUÍA DE OBSERVACIÓN (SOLICITADO) -->
-            <div class="glass p-6 rounded-2xl space-y-4 border border-indigo-500/20">
-                <h4 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
-                    <span>🌊</span> Visualización de Ondas Sonoras: Frecuencia, Tono y Percepción
+            <!-- CONTENIDO TEÓRICO Y GUÍA PASO A PASO -->
+            <div class="glass p-6 rounded-2xl space-y-4 border border-amber-500/20">
+                <h4 class="font-bold text-sm text-amber-300 flex items-center gap-2">
+                    <span>📡</span> ¿Cómo viaja el sonido y por qué se apaga al alejarnos?
                 </h4>
                 <p class="text-xs text-gray-300 leading-relaxed">
-                    En este módulo experimental, exploramos la relación directa entre los parámetros físicos de una onda sonora y su percepción auditiva (el tono). A través de la interfaz de visualización, podrás comprobar en tiempo real cómo se comportan las ondas al emitir diferentes frecuencias.
+                    Imagina que estás en el centro de una habitación y hablas fuerte: tu voz viaja en todas direcciones formando una esfera invisible que se expande, igual que cuando tiras una piedra al agua y se forman círculos concéntricos.
                 </p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                    <!-- Columna 1: Fenómeno físico y Graves vs Agudos -->
-                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
-                        <div>
-                            <strong class="text-white block mb-1">1. El Fenómeno Físico: ¿Qué es una Onda Sonora?</strong>
-                            <p class="text-gray-400">El sonido es una onda mecánica longitudinal generada por una perturbación de presión que se propaga en un medio elástico (como el aire). Al emitir un sonido continuo, se generan variaciones periódicas de presión frente al tiempo ($t$).</p>
-                        </div>
-                        <div>
-                            <strong class="text-white block mb-1">2. Relación entre Frecuencia y Tono ($f$ en Hz):</strong>
-                            <ul class="space-y-1.5 text-gray-400 pl-3">
-                                <li>📉 <strong class="text-indigo-300">Sonidos Graves (&lt; 250 Hz):</strong> Período ($T$) largo; crestas y valles más espaciados y amplios.</li>
-                                <li>📈 <strong class="text-indigo-300">Sonidos Agudos (&gt; 2000 Hz):</strong> Período corto; crestas y valles comprimidos y densos.</li>
-                            </ul>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-xs">
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-2">
+                        <strong class="text-amber-400 block">1. La idea principal</strong>
+                        <p class="text-gray-400">A medida que el sonido se aleja de la fuente, la energía se reparte en un espacio cada vez mayor. Por eso, a mayor distancia, más débil llega el sonido.</p>
                     </div>
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-2">
+                        <strong class="text-amber-400 block">2. ¿Qué se ve en pantalla?</strong>
+                        <p class="text-gray-400"><b>Cerca:</b> Onda alta (mucha amplitud/volumen).<br><b>Lejos:</b> La onda se encoge y se ve bajita porque perdió fuerza en el camino.</p>
+                    </div>
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-2">
+                        <strong class="text-amber-400 block">3. Ley del Inverso del Cuadrado</strong>
+                        <p class="text-gray-400">Si duplicas la distancia entre la fuente y el micrófono, el sonido no baja a la mitad, ¡baja <b>cuatro veces</b> su intensidad!</p>
+                    </div>
+                </div>
 
-                    <!-- Columna 2: Guía de Observación Experimental -->
-                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
-                        <strong class="text-white block mb-1">3. Guía de Observación Experimental</strong>
-                        <ol class="space-y-2 text-gray-400 list-decimal pl-4">
-                            <li><strong class="text-gray-300">Emisión Constante (Tono Grave):</strong> Mantén un zumbido grave frente al micrófono y analiza el espaciamiento horizontal entre ciclos.</li>
-                            <li><strong class="text-gray-300">Transición de Frecuencia:</strong> Eleva el tono progresivamente hacia un registro agudo sin alterar la intensidad. Observa la compresión temporal.</li>
-                            <li><strong class="text-gray-300">Amplitud vs. Frecuencia:</strong> Varía el volumen manteniendo la nota. Nota que la altura vertical cambia y la distancia horizontal se mantiene.</li>
-                        </ol>
+                <div class="bg-amber-500/10 p-4 rounded-xl border border-amber-500/20 text-xs text-amber-200 space-y-1">
+                    <strong class="block font-semibold">🧪 Guía paso a paso para realizar el experimento:</strong>
+                    <ul class="list-disc pl-4 space-y-1 text-gray-300">
+                        <li><b>Punto de partida:</b> Coloca el micrófono muy cerca de la fuente (ej. 50 cm) y observa la altura de la onda.</li>
+                        <li><b>Alejarse ordenadamente:</b> Mueve el micrófono hacia atrás midiendo distancias (1 m, 1.5 m, 2 m...).</li>
+                        <li><b>Resultado esperado:</b> En los primeros metros la onda baja rápido de tamaño, pero al seguir alejándote la bajada se vuelve cada vez más lenta.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PANEL INTERACTIVO DE INGRESO DE MEDIDAS -->
+            <div class="glass p-5 rounded-2xl space-y-4 border border-indigo-500/30">
+                <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                    <span>📝</span> Ingresa tu Medición Personalizada
+                </h4>
+                <p class="text-xs text-gray-400">
+                    Elige la distancia a la que realizas la prueba y anota el nivel de señal capturado para agregarlo a la tabla y compararlo con la curva teórica.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end pt-2">
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-gray-300 block font-medium">Distancia medida (cm):</label>
+                        <input type="number" id="inputDistancia" value="50" min="10" max="500" step="10" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-gray-300 block font-medium">Nivel de Señal / Amplitud (RMS):</label>
+                        <input type="number" id="inputSenal" value="2.50" min="0.01" max="10" step="0.05" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <button onclick="agregarMedicionPersonalizada()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30">
+                            + Agregar a la Tabla
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Gráfico Único de Osciloscopio en Vivo (Amplitud vs Tiempo) -->
-            <div class="glass p-5 rounded-2xl space-y-3">
+            <!-- TABLA DE DATOS EXPERIMENTALES -->
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-gray-800 flex justify-between items-center">
+                    <h4 class="font-bold text-sm text-white">📊 Tabla de Datos Registrados</h4>
+                    <button onclick="reiniciarTabla()" class="text-xs text-red-400 hover:underline">Reiniciar Tabla</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-900/60 text-gray-400 text-xs uppercase">
+                            <tr>
+                                <th class="p-3">Punto N°</th>
+                                <th class="p-3">Distancia ($cm$)</th>
+                                <th class="p-3">Nivel Empírico (Medido)</th>
+                                <th class="p-3">Valor Teórico (Inverso Cuadrado)</th>
+                                <th class="p-3 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpoTablaPropagacion" class="divide-y divide-gray-800 text-gray-300 text-xs">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GRÁFICO COMPARATIVO CON COLORES FUERTES Y DIFERENCIADOS -->
+            <div class="glass p-5 rounded-2xl space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                     <div>
-                        <h4 class="font-bold text-sm text-white">OSCILOSCOPIO EN TIEMPO REAL</h4>
-                        <p class="text-[11px] text-gray-400">Representación gráfica de Amplitud (Presión) frente al Tiempo ($t$)</p>
+                        <h4 class="font-bold text-sm text-white">📈 Gráfico Comparativo: Curva Teórica vs. Datos Empíricos</h4>
+                        <p class="text-[11px] text-gray-400">Contraste visual de la atenuación del sonido en función de la distancia</p>
                     </div>
-                    <span id="estadoCapturaOsc" class="text-xs bg-gray-800 px-3 py-1 rounded-full text-gray-400">Esperando micrófono...</span>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#3b82f6] inline-block"></span> <b class="text-gray-300">Datos Alumno (Azul Eléctrico)</b></span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ef4444] inline-block"></span> <b class="text-gray-300">Teórico (Rojo Intenso)</b></span>
+                    </div>
                 </div>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="graficoOsciloscopio"></canvas>
+                <div class="h-72 flex items-center justify-center">
+                    <canvas id="graficoPropagacion"></canvas>
                 </div>
-                <div class="flex justify-end pt-2">
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="alert('Informe de propagación exportado con éxito.')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg transition">
+                        📄 Exportar Informe CSV
+                    </button>
                     <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">
                         Volver al Menú Principal
                     </button>
                 </div>
             </div>
+        </section>
 
         </section>
     </main>
