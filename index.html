@@ -24,7 +24,10 @@
                 <p class="text-xs text-gray-400">Universidad Mayor - Ingeniería Civil Industrial</p>
             </div>
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3">
+            <button onclick="solicitarPermisoMicrofono()" id="estadoMicBadge" class="text-xs bg-red-500/10 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg transition hover:bg-red-500/20 flex items-center gap-1.5">
+                <span>🎙️</span> <span id="textoEstadoMic">Micrófono Inactivo</span>
+            </button>
             <button onclick="cambiarSeccion('menu')" class="text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg transition">🏠 Menú Principal</button>
             <button onclick="abrirTutorial()" class="text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">💡 Tutorial</button>
         </div>
@@ -36,11 +39,8 @@
         <!-- MENÚ PRINCIPAL -->
         <section id="vista-menu" class="space-y-6">
             <div class="glass p-8 rounded-2xl text-center space-y-4 relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 opacity-10 pointer-events-none">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80" class="w-96 rounded-full" alt="Fondo acústica">
-                </div>
                 <h2 class="text-3xl font-extrabold text-white">Entorno Experimental AulaSound</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Selecciona uno de los tres módulos experimentales de acústica para iniciar tus mediciones, análisis en tiempo real y validación teórica.</p>
+                <p class="text-gray-400 max-w-2xl mx-auto">Selecciona uno de los tres módulos experimentales de acústica para iniciar tus mediciones y análisis en tiempo real.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
                     <!-- Experimento 1 -->
@@ -50,10 +50,8 @@
                             <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">Módulo 1</span>
                         </div>
                         <h3 class="font-bold text-white group-hover:text-indigo-400 transition">Experimento 1: Frecuencia y Ondas</h3>
-                        <p class="text-xs text-gray-400">Osciloscopio interactivo y Transformada Rápida de Fourier (FFT) para análisis espectral.</p>
-                        <div class="pt-2">
-                            <span class="text-xs text-indigo-400 font-medium flex items-center gap-1">▶ Iniciar experimento</span>
-                        </div>
+                        <p class="text-xs text-gray-400">Osciloscopio interactivo y análisis perceptual de graves vs. agudos.</p>
+                        <div class="pt-2"><span class="text-xs text-indigo-400 font-medium">▶ Iniciar experimento</span></div>
                     </div>
 
                     <!-- Experimento 2 -->
@@ -63,10 +61,8 @@
                             <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Módulo 2</span>
                         </div>
                         <h3 class="font-bold text-white group-hover:text-emerald-400 transition">Experimento 2: Acústica de Salas</h3>
-                        <p class="text-xs text-gray-400">Medición de niveles de presión sonora (dB), reflexiones directas y secundarias.</p>
-                        <div class="pt-2">
-                            <span class="text-xs text-emerald-400 font-medium flex items-center gap-1">▶ Iniciar experimento</span>
-                        </div>
+                        <p class="text-xs text-gray-400">Medición de niveles de presión sonora (dB) y reflexiones.</p>
+                        <div class="pt-2"><span class="text-xs text-emerald-400 font-medium">▶ Iniciar experimento</span></div>
                     </div>
 
                     <!-- Experimento 3 -->
@@ -76,179 +72,246 @@
                             <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Módulo 3</span>
                         </div>
                         <h3 class="font-bold text-white group-hover:text-amber-400 transition">Experimento 3: Propagación del Sonido</h3>
-                        <p class="text-xs text-gray-400">Estudio de la ley del inverso del cuadrado y atenuación de la señal con la distancia.</p>
-                        <div class="pt-2">
-                            <span class="text-xs text-amber-400 font-medium flex items-center gap-1">▶ Iniciar experimento</span>
-                        </div>
+                        <p class="text-xs text-gray-400">Estudio de la ley del inverso del cuadrado con la distancia.</p>
+                        <div class="pt-2"><span class="text-xs text-amber-400 font-medium">▶ Iniciar experimento</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VISTA DE EXPERIMENTO -->
+        <!-- VISTA DE EXPERIMENTO 1: FRECUENCIA Y ONDAS -->
         <section id="vista-experimento" class="hidden space-y-6">
             
-            <!-- Barra superior del experimento con selector de audio integrado -->
-            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento activo</h3>
-                    <p class="text-xs text-gray-400">Registra tus 5 repeticiones y analiza el comportamiento físico en tiempo real.</p>
-                </div>
-                <!-- Reproductor o Generador de Sonido Simulado -->
-                <div class="bg-gray-900/80 px-4 py-2.5 rounded-xl border border-gray-800 flex items-center gap-3">
-                    <span class="text-xs text-indigo-400 font-medium">🎵 Generador de Audio:</span>
-                    <button onclick="reproducirTonoPrueba()" id="btnAudio" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition">🔊 Reproducir Tono Test (440Hz)</button>
-                </div>
-            </div>
-
-            <!-- Gráficos Superiores -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Osciloscopio -->
-                <div class="glass p-4 rounded-xl lg:col-span-2 space-y-3">
-                    <div class="flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <span class="font-semibold text-gray-200">OSCILOSCOPIO (SEÑAL EN TIEMPO REAL)</span>
-                        <span class="text-indigo-400">Onda Acústica</span>
-                    </div>
-                    <div class="h-48 flex items-center justify-center">
-                        <canvas id="graficoOsciloscopio"></canvas>
+            <!-- Aviso de Permiso de Micrófono -->
+            <div id="bannerPermisoExp" class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">🎙️</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-amber-300">Se requiere acceso al micrófono para visualizar las ondas</h4>
+                        <p class="text-xs text-gray-300">Activa el sensor de audio para ver la respuesta del osciloscopio en tiempo real.</p>
                     </div>
                 </div>
-                <!-- Espectro FFT -->
-                <div class="glass p-4 rounded-xl space-y-3">
-                    <div class="flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <span class="font-semibold text-gray-200">ESPECTRO FFT (FRECUENCIA)</span>
-                        <span class="text-emerald-400">Pico: 440.0 Hz</span>
-                    </div>
-                    <div class="h-48 flex items-center justify-center">
-                        <canvas id="graficoFFT"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Panel de Control y Registro -->
-            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="text-xs text-gray-400">
-                    Capture 5 repeticiones consecutivas para completar la tabla experimental del laboratorio.
-                </div>
-                <button onclick="registrarMedicion()" id="btnRegistrar" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium transition flex items-center gap-2 shadow-lg shadow-indigo-600/30">
-                    <span>📌</span> REGISTRAR MEDICIÓN (N° <span id="contadorRep">1</span>/5)
+                <button onclick="solicitarPermisoMicrofono()" class="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">
+                    Activar Micrófono
                 </button>
             </div>
 
-            <!-- Tabla de Repeticiones -->
-            <div class="glass rounded-xl overflow-hidden">
-                <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-                    <h3 class="font-bold text-sm text-white">TABLA DE REPETICIONES EXPERIMENTALES</h3>
-                    <button onclick="limpiarTabla()" class="text-xs text-red-400 hover:underline">Limpiar Tabla</button>
+            <!-- Cabecera del Módulo -->
+            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento 1: Frecuencia y Ondas</h3>
+                    <p class="text-xs text-gray-400">Visualización interactiva de ondas sonoras, tono y percepción.</p>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase">
-                            <tr>
-                                <th class="p-3">N°</th>
-                                <th class="p-3">Distancia / cm</th>
-                                <th class="p-3">Presión Sonora (dB)</th>
-                                <th class="p-3 text-right">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpoTabla" class="divide-y divide-gray-800 text-gray-300">
-                            <tr><td class="p-3 font-medium">1</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
-                            <tr><td class="p-3 font-medium">2</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
-                            <tr><td class="p-3 font-medium">3</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
-                            <tr><td class="p-3 font-medium">4</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
-                            <tr><td class="p-3 font-medium">5</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
-                        </tbody>
-                    </table>
+                <div class="bg-gray-900/80 px-4 py-2.5 rounded-xl border border-gray-800 flex items-center gap-3">
+                    <span class="text-xs text-indigo-400 font-medium">🎵 Generador de Test:</span>
+                    <button onclick="reproducirTonoPrueba()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition">🔊 Tono 440Hz (La)</button>
                 </div>
             </div>
 
-            <!-- Resumen Estadístico, Hipótesis con Imagen y Gráfico Comparativo -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Tarjeta de Hipótesis con Imagen Conceptual -->
-                <div class="glass p-5 rounded-xl space-y-4 flex flex-col justify-between">
+            <!-- CONTENIDO TEÓRICO Y GUÍA DE OBSERVACIÓN (SOLICITADO) -->
+            <div class="glass p-6 rounded-2xl space-y-4 border border-indigo-500/20">
+                <h4 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                    <span>🌊</span> Visualización de Ondas Sonoras: Frecuencia, Tono y Percepción
+                </h4>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    En este módulo experimental, exploramos la relación directa entre los parámetros físicos de una onda sonora y su percepción auditiva (el tono). A través de la interfaz de visualización, podrás comprobar en tiempo real cómo se comportan las ondas al emitir diferentes frecuencias.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <!-- Columna 1: Fenómeno físico y Graves vs Agudos -->
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+                        <div>
+                            <strong class="text-white block mb-1">1. El Fenómeno Físico: ¿Qué es una Onda Sonora?</strong>
+                            <p class="text-gray-400">El sonido es una onda mecánica longitudinal generada por una perturbación de presión que se propaga en un medio elástico (como el aire). Al emitir un sonido continuo, se generan variaciones periódicas de presión frente al tiempo ($t$).</p>
+                        </div>
+                        <div>
+                            <strong class="text-white block mb-1">2. Relación entre Frecuencia y Tono ($f$ en Hz):</strong>
+                            <ul class="space-y-1.5 text-gray-400 pl-3">
+                                <li>📉 <strong class="text-indigo-300">Sonidos Graves (&lt; 250 Hz):</strong> Período ($T$) largo; crestas y valles más espaciados y amplios.</li>
+                                <li>📈 <strong class="text-indigo-300">Sonidos Agudos (&gt; 2000 Hz):</strong> Período corto; crestas y valles comprimidos y densos.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Columna 2: Guía de Observación Experimental -->
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+                        <strong class="text-white block mb-1">3. Guía de Observación Experimental</strong>
+                        <ol class="space-y-2 text-gray-400 list-decimal pl-4">
+                            <li><strong class="text-gray-300">Emisión Constante (Tono Grave):</strong> Mantén un zumbido grave frente al micrófono y analiza el espaciamiento horizontal entre ciclos.</li>
+                            <li><strong class="text-gray-300">Transición de Frecuencia:</strong> Eleva el tono progresivamente hacia un registro agudo sin alterar la intensidad. Observa la compresión temporal.</li>
+                            <li><strong class="text-gray-300">Amplitud vs. Frecuencia:</strong> Varía el volumen manteniendo la nota. Nota que la altura vertical cambia y la distancia horizontal se mantiene.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico Único de Osciloscopio en Vivo (Amplitud vs Tiempo) -->
+            <div class="glass p-5 rounded-2xl space-y-3">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                     <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <!-- Icono de bombilla o cerebro conceptual estilo tus capturas -->
-                            <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400 text-sm">💡</div>
-                            <h4 class="font-bold text-sm text-white">HIPÓTESIS PLANTEADA</h4>
-                        </div>
-                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
-                            Se espera que la atenuación de la señal acústica cumpla con el modelo teórico inverso en función de la distancia al emisor.
-                        </p>
-                        <!-- Imagen ilustrativa integrada -->
-                        <div class="rounded-lg overflow-hidden border border-gray-800 bg-gray-900/50 p-2 text-center">
-                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" class="w-full h-28 object-cover rounded-md opacity-80" alt="Esquema conceptual">
-                            <span class="text-[10px] text-gray-400 mt-1 block">Modelo analítico de propagación</span>
-                        </div>
+                        <h4 class="font-bold text-sm text-white">OSCILOSCOPIO EN TIEMPO REAL</h4>
+                        <p class="text-[11px] text-gray-400">Representación gráfica de Amplitud (Presión) frente al Tiempo ($t$)</p>
                     </div>
-
-                    <div class="pt-2 border-t border-gray-800">
-                        <span class="text-xs text-gray-400">ESTADÍSTICAS DE MEDICIONES</span>
-                        <div class="flex justify-between items-center mt-1">
-                            <span class="text-xl font-bold text-indigo-400" id="promedioEst">72.00 dB</span>
-                            <span class="text-sm font-semibold text-emerald-400">± 3.63 dB</span>
-                        </div>
-                        <p class="text-[11px] text-gray-500">Promedio empírico y desviación estándar</p>
-                    </div>
+                    <span id="estadoCapturaOsc" class="text-xs bg-gray-800 px-3 py-1 rounded-full text-gray-400">Esperando micrófono...</span>
                 </div>
-
-                <!-- Gráfico Comparativo -->
-                <div class="glass p-5 rounded-xl lg:col-span-2 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-white">Gráfico Comparativo: Teórico vs. Empírico (5 Repeticiones)</h4>
-                        <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-500/30">Análisis Analítico</span>
-                    </div>
-                    <div class="h-44 flex items-center justify-center">
-                        <canvas id="graficoComparativo"></canvas>
-                    </div>
-                    <div class="flex justify-between items-center pt-2">
-                        <button onclick="alert('Informe CSV exportado con éxito desde AulaSound.')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg transition flex items-center gap-1.5">
-                            📄 Exportar Informe CSV
-                        </button>
-                        <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">
-                            Volver al Menú Principal
-                        </button>
-                    </div>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="graficoOsciloscopio"></canvas>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">
+                        Volver al Menú Principal
+                    </button>
                 </div>
             </div>
+
         </section>
     </main>
 
     <!-- Modal Tutorial -->
-    <div id="modalTutorial" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass max-w-lg w-full p-6 rounded-2xl space-y-6 relative border border-gray-700">
-            <button onclick="cerrarTutorial()" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
-            <div id="paso1" class="space-y-4">
-                <div class="bg-indigo-600/20 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 text-xl font-bold border border-indigo-500/30">🔊</div>
-                <h3 class="text-xl font-bold text-white">¡Bienvenido a AulaSound!</h3>
-                <p class="text-sm text-gray-300 leading-relaxed">Laboratorio interactivo de física acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.</p>
-                <div class="bg-indigo-500/10 border border-indigo-500/20 p-3 rounded-lg text-xs text-indigo-300">
-                    ✨ <b>Estructura de las 3 Experiencias:</b> Plantea tu hipótesis, realiza 5 mediciones guiadas y contrasta empíricamente con modelos teóricos.
+    <div id="modalTutorial" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass max-w-md w-full p-6 rounded-2xl space-y-5 relative border border-gray-700 shadow-2xl">
+            <button onclick="finalizarTutorialYPedirMic()" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+            
+            <div id="contenidoModal" class="space-y-4">
+                <div class="bg-indigo-600/20 w-10 h-10 rounded-xl flex items-center justify-center text-indigo-400 text-lg font-bold border border-indigo-500/30">🔊</div>
+                <h3 class="text-xl font-bold text-white" id="modalTitulo">¡Bienvenido a AulaSound!</h3>
+                <p class="text-sm text-gray-300 leading-relaxed" id="modalTexto">Laboratorio interactivo de acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.</p>
+                
+                <div id="modalCajaExtra" class="bg-gray-900/80 border border-gray-800 p-3 rounded-xl text-xs text-gray-300 space-y-1">
+                    <span class="font-semibold text-indigo-400 block">💡 Método científico interactivo:</span>
+                    <span>Plantea tu hipótesis, realiza mediciones guiadas y contrasta tus resultados con gráficos analíticos.</span>
                 </div>
             </div>
-            <div class="flex justify-between items-center pt-4 border-t border-gray-800">
-                <button onclick="cerrarTutorial()" class="text-xs text-gray-400 hover:text-white">Saltar Tutorial</button>
-                <button onclick="cerrarTutorial()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-xl font-medium transition">Comenzar Laboratorio</button>
+
+            <div class="flex justify-between items-center pt-3 border-t border-gray-800">
+                <button onclick="finalizarTutorialYPedirMic()" class="text-xs text-gray-400 hover:text-white transition">Saltar Tutorial</button>
+                <button onclick="siguientePasoTutorial()" id="btnSiguienteModal" class="bg-blue-600 hover:bg-blue-500 text-white text-sm px-5 py-2 rounded-xl font-medium transition shadow-lg shadow-blue-600/25">Siguiente</button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts de Interacción y Gráficos -->
+    <!-- Modal Permiso Micrófono -->
+    <div id="modalMicrofono" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass max-w-sm w-full p-6 rounded-2xl space-y-5 text-center border border-gray-700 shadow-2xl">
+            <div class="bg-emerald-500/20 w-14 h-14 rounded-2xl flex items-center justify-center text-emerald-400 text-2xl mx-auto border border-emerald-500/30">
+                🎙️
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-lg font-bold text-white">Activar Micrófono del Laboratorio</h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Para visualizar las ondas acústicas en tiempo real en el osciloscopio, necesitamos permiso para usar tu micrófono.
+                </p>
+            </div>
+            <div class="flex flex-col gap-2 pt-2">
+                <button onclick="solicitarPermisoMicrofono()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm py-2.5 rounded-xl font-semibold transition shadow-lg shadow-emerald-600/25">
+                    Permitir Acceso al Audio
+                </button>
+                <button onclick="cerrarModalMicrofono()" class="w-full text-xs text-gray-400 hover:text-white py-2 transition">
+                    Continuar sin micrófono por ahora
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
-        let repActual = 1;
-        let datosTabla = [
-            { d: 50, db: 74.2 },
-            { d: 100, db: 68.5 },
-            { d: 150, db: 64.1 },
-            { d: 200, db: 60.8 },
-            { d: 250, db: 58.0 }
-        ];
+        let pasoTutorial = 1;
+        let microfonoActivo = false;
+        let audioContext, analyser, dataArray;
+        let chartOsc;
+
+        function abrirTutorial() {
+            pasoTutorial = 1;
+            actualizarPasoTutorial();
+            document.getElementById('modalTutorial').classList.remove('hidden');
+        }
+
+        function finalizarTutorialYPedirMic() {
+            document.getElementById('modalTutorial').classList.add('hidden');
+            if (!microfonoActivo) {
+                document.getElementById('modalMicrofono').classList.remove('hidden');
+            }
+        }
+
+        function cerrarModalMicrofono() {
+            document.getElementById('modalMicrofono').classList.add('hidden');
+        }
+
+        function siguientePasoTutorial() {
+            pasoTutorial++;
+            if(pasoTutorial === 2) {
+                document.getElementById('modalTitulo').innerText = "Estructura de las Experiencias";
+                document.getElementById('modalTexto').innerText = "Cada módulo sigue un flujo estructurado de análisis riguroso:";
+                document.getElementById('modalCajaExtra').innerHTML = `
+                    <div class='space-y-1.5 text-xs'>
+                        <div><b>1. Teoría e Hipótesis:</b> Contexto y fundamentos físicos.</div>
+                        <div><b>2. Visualización en Vivo:</b> Análisis en el osciloscopio.</div>
+                        <div><b>3. Validación:</b> Contraste empírico.</div>
+                    </div>`;
+            } else if(pasoTutorial === 3) {
+                document.getElementById('modalTitulo').innerText = "Herramientas de Audio Integradas";
+                document.getElementById('modalTexto').innerText = "Utiliza el micrófono de tu dispositivo para capturar ondas reales y generadores de tonos de prueba.";
+                document.getElementById('modalCajaExtra').innerHTML = `<span class="text-emerald-400 text-xs">✔ Optimizado para navegador web y dispositivos móviles.</span>`;
+                document.getElementById('btnSiguienteModal').innerText = "Comenzar Laboratorio";
+            } else {
+                finalizarTutorialYPedirMic();
+            }
+        }
+
+        function actualizarPasoTutorial() {
+            document.getElementById('modalTitulo').innerText = "¡Bienvenido a AulaSound!";
+            document.getElementById('modalTexto').innerText = "Laboratorio interactivo de acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.";
+            document.getElementById('modalCajaExtra').innerHTML = `
+                <span class="font-semibold text-indigo-400 block">💡 Método científico interactivo:</span>
+                <span>Plantea tu hipótesis, realiza mediciones guiadas y contrasta tus resultados con gráficos analíticos.</span>`;
+            document.getElementById('btnSiguienteModal').innerText = "Siguiente";
+        }
+
+        async function solicitarPermisoMicrofono() {
+            cerrarModalMicrofono();
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                microfonoActivo = true;
+                
+                const badge = document.getElementById('estadoMicBadge');
+                badge.className = "text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5";
+                document.getElementById('textoEstadoMic').innerText = "Micrófono Activo";
+                
+                const banner = document.getElementById('bannerPermisoExp');
+                if(banner) banner.classList.add('hidden');
+                
+                const estadoOsc = document.getElementById('estadoCapturaOsc');
+                if(estadoOsc) {
+                    estadoOsc.innerText = "● Capturando onda en vivo";
+                    estadoOsc.className = "text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/30 font-medium";
+                }
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                source.connect(analyser);
+
+                if (!document.getElementById('vista-experimento').classList.contains('hidden')) {
+                    iniciarBucleAudioEnVivo();
+                }
+            } catch (err) {
+                alert("No se pudo acceder al micrófono. Verifica los permisos de tu navegador.");
+            }
+        }
 
         function seleccionarExperimento(num, nombre) {
             document.getElementById('titulo-exp-badge').innerText = `MÓDULO ${num}`;
             document.getElementById('nombre-experimento-activo').innerText = nombre;
             cambiarSeccion('experimento');
+            
+            if (!microfonoActivo) {
+                document.getElementById('bannerPermisoExp').classList.remove('hidden');
+                document.getElementById('modalMicrofono').classList.remove('hidden');
+            } else {
+                document.getElementById('bannerPermisoExp').classList.add('hidden');
+                iniciarBucleAudioEnVivo();
+            }
         }
 
         function cambiarSeccion(seccion) {
@@ -259,113 +322,74 @@
             } else {
                 document.getElementById('vista-menu').classList.add('hidden');
                 document.getElementById('vista-experimento').classList.remove('hidden');
-                inicializarGraficos();
+                inicializarGraficoOsciloscopio();
             }
         }
-
-        function abrirTutorial() { document.getElementById('modalTutorial').classList.remove('hidden'); }
-        function cerrarTutorial() { document.getElementById('modalTutorial').classList.add('hidden'); }
 
         function reproducirTonoPrueba() {
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.value = 440; // 440 Hz (Nota La)
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.frequency.value = 440;
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
                 osc.connect(gain);
-                gain.connect(audioCtx.destination);
+                gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + 1.5);
-                alert("Reproduciendo tono de calibración de 440 Hz (1.5 segundos).");
-            } catch(e) {
-                alert("Audio soportado en el navegador.");
-            }
+                osc.stop(ctx.currentTime + 1.5);
+            } catch(e) { alert("Audio activado."); }
         }
 
-        function registrarMedicion() {
-            if(repActual <= 5) {
-                const fila = document.getElementById('cuerpoTabla').rows[repActual - 1];
-                fila.cells[1].innerText = datosTabla[repActual-1].d;
-                fila.cells[2].innerText = datosTabla[repActual-1].db + " dB";
-                fila.cells[3].innerText = "Registrado";
-                fila.cells[3].className = "p-3 text-right text-emerald-400 font-medium";
-                
-                repActual++;
-                if(repActual <= 5) {
-                    document.getElementById('contadorRep').innerText = repActual;
-                } else {
-                    document.getElementById('btnRegistrar').innerText = "¡Módulo Completado!";
-                    document.getElementById('btnRegistrar').disabled = true;
-                    document.getElementById('btnRegistrar').classList.add('opacity-50', 'cursor-not-allowed');
-                }
-            }
-        }
+        function inicializarGraficoOsciloscopio() {
+            if(chartOsc) chartOsc.destroy();
 
-        function limpiarTabla() {
-            repActual = 1;
-            document.getElementById('contadorRep').innerText = 1;
-            const btn = document.getElementById('btnRegistrar');
-            btn.innerText = "📌 REGISTRAR MEDICIÓN (N° 1/5)";
-            btn.disabled = false;
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            
-            const tbody = document.getElementById('cuerpoTabla');
-            for(let i=0; i<5; i++) {
-                tbody.rows[i].cells[1].innerText = "-----";
-                tbody.rows[i].cells[2].innerText = "-----";
-                tbody.rows[i].cells[3].innerText = "Pendiente";
-                tbody.rows[i].cells[3].className = "p-3 text-right text-gray-500";
-            }
-        }
-
-        function inicializarGraficos() {
-            // Osciloscopio
             const ctxOsc = document.getElementById('graficoOsciloscopio').getContext('2d');
-            new Chart(ctxOsc, {
+            chartOsc = new Chart(ctxOsc, {
                 type: 'line',
-                data: {
-                    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                    datasets: [{
-                        data: [0, 1.2, 0.8, -1, -0.5, 1.1, 0.7, -1.2, -0.3, 0],
-                        borderColor: '#6366f1',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }]
+                data: { 
+                    labels: Array.from({length: 60}, (_, i) => i), 
+                    datasets: [{ 
+                        data: Array(60).fill(0), 
+                        borderColor: '#6366f1', 
+                        borderWidth: 2.5, 
+                        tension: 0.35, 
+                        pointRadius: 0 
+                    }] 
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+                options: { 
+                    animation: false, 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { display: false }, 
+                        y: { min: -1, max: 1, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } } 
+                    } 
+                }
             });
 
-            // FFT
-            const ctxFFT = document.getElementById('graficoFFT').getContext('2d');
-            new Chart(ctxFFT, {
-                type: 'bar',
-                data: {
-                    labels: ['100Hz', '200Hz', '440Hz', '800Hz', '1kHz'],
-                    datasets: [{
-                        data: [15, 30, 85, 40, 20],
-                        backgroundColor: '#10b981',
-                        borderRadius: 4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { display: false } } }
-            });
+            if(microfonoActivo) iniciarBucleAudioEnVivo();
+        }
 
-            // Comparativo
-            const ctxComp = document.getElementById('graficoComparativo').getContext('2d');
-            new Chart(ctxComp, {
-                type: 'bar',
-                data: {
-                    labels: ['Repetición 1', 'Repetición 2', 'Repetición 3', 'Repetición 4', 'Repetición 5'],
-                    datasets: [
-                        { label: 'Empírico (Medición)', data: [74.2, 68.5, 64.1, 60.8, 58.0], backgroundColor: '#3b82f6', borderRadius: 4 },
-                        { label: 'Teórico / Referencia', data: [74, 68, 64, 60, 57], backgroundColor: '#6366f1', borderRadius: 4 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af', boxWidth: 12 } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af' } }, y: { ticks: { color: '#9ca3af' } } } }
-            });
+        function iniciarBucleAudioEnVivo() {
+            if(!microfonoActivo || !analyser) return;
+            const timeData = new Uint8Array(analyser.fftSize);
+            
+            function actualizar() {
+                if(document.getElementById('vista-experimento').classList.contains('hidden')) return;
+                
+                analyser.getByteTimeDomainData(timeData);
+                const ondaNormalizada = Array.from(timeData.slice(0, 60)).map(v => (v - 128) / 128);
+                
+                if(chartOsc) {
+                    chartOsc.data.datasets[0].data = ondaNormalizada;
+                    chartOsc.update();
+                }
+
+                requestAnimationFrame(actualizar);
+            }
+            actualizar();
         }
     </script>
 </body>
