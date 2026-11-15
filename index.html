@@ -53,6 +53,129 @@
                         <p class="text-xs text-gray-400">Osciloscopio interactivo y análisis perceptual de graves vs. agudos.</p>
                         <div class="pt-2"><span class="text-xs text-indigo-400 font-medium">▶ Iniciar experimento</span></div>
                     </div>
+                    <!-- VISTA DE EXPERIMENTO 1: FRECUENCIA Y ONDAS -->
+        <section id="vista-experimento" class="hidden space-y-6">
+            
+            <!-- Aviso de Permiso de Micrófono -->
+            <div id="bannerPermisoExp" class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">🎙️</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-amber-300">Se requiere acceso al micrófono para visualizar las ondas</h4>
+                        <p class="text-xs text-gray-300">Activa el sensor de audio para ver la respuesta cromática del osciloscopio en tiempo real.</p>
+                    </div>
+                </div>
+                <button onclick="solicitarPermisoMicrofono()" class="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">
+                    Activar Micrófono
+                </button>
+            </div>
+
+            <!-- Cabecera del Módulo -->
+            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento 1: Frecuencia y Ondas (Graves vs. Agudos)</h3>
+                    <p class="text-xs text-gray-400">Visualización interactiva de ondas sonoras, tono y percepción auditiva.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-gray-900/80 px-3 py-2 rounded-xl border border-gray-800 flex items-center gap-2">
+                        <span class="text-[11px] text-gray-400 font-medium">Test:</span>
+                        <button onclick="reproducirTonoPrueba(180)" class="text-[11px] bg-red-600/80 hover:bg-red-500 text-white px-2.5 py-1 rounded-lg transition border border-red-400/30">🔊 Grave (180Hz)</button>
+                        <button onclick="reproducirTonoPrueba(1500)" class="text-[11px] bg-blue-600/80 hover:bg-blue-500 text-white px-2.5 py-1 rounded-lg transition border border-blue-400/30">🔊 Agudo (1500Hz)</button>
+                    </div>
+                    <button onclick="cambiarSeccion('menu')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-2 rounded-lg transition">🏠 Menú</button>
+                </div>
+            </div>
+
+            <!-- CONTENIDO TEÓRICO Y GUÍA DE OBSERVACIÓN -->
+            <div class="glass p-6 rounded-2xl space-y-4 border border-indigo-500/20">
+                <h4 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                    <span>🌊</span> Visualización de Ondas Sonoras: Frecuencia, Tono y Percepción
+                </h4>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    En este módulo experimental, exploramos la relación directa entre los parámetros físicos de una onda sonora y su percepción auditiva (el tono). A través de la interfaz de visualización, comprobarás en tiempo real cómo se comportan las ondas al emitir diferentes frecuencias.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+                        <div>
+                            <strong class="text-white block mb-1">1. El Fenómeno Físico: ¿Qué es una Onda Sonora?</strong>
+                            <p class="text-gray-400">El sonido es una onda mecánica longitudinal generada por una perturbación de presión que se propaga en un medio elástico (aire), traducida aquí como presión frente al tiempo ($t$).</p>
+                        </div>
+                        <div>
+                            <strong class="text-white block mb-1">2. Código de Color por Frecuencia ($f$ en Hz):</strong>
+                            <ul class="space-y-1.5 text-gray-400 pl-3">
+                                <li>🔴 <strong class="text-red-400">Onda Roja — Sonidos Graves (&lt; 350 Hz):</strong> Período ($T$) largo; crestas y valles más espaciados y amplios.</li>
+                                <li>🔵 <strong class="text-blue-400">Onda Azul — Sonidos Agudos (&gt; 1000 Hz):</strong> Período corto; crestas y valles comprimidos y densos.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-3 text-xs">
+                        <strong class="text-white block mb-1">3. Guía de Observación Experimental</strong>
+                        <ol class="space-y-2 text-gray-400 list-decimal pl-4">
+                            <li><strong class="text-gray-300">Emisión Grave (Onda Roja):</strong> Mantén un zumbido grave frente al micrófono y presiona <em>"📸 Capturar Onda"</em>.</li>
+                            <li><strong class="text-gray-300">Emisión Aguda (Onda Azul):</strong> Eleva el tono o silba y toma una segunda captura.</li>
+                            <li><strong class="text-gray-300">Análisis Comparativo:</strong> Revisa la conclusión automática generada abajo para validar la teoría.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico Único de Osciloscopio en Vivo -->
+            <div class="glass p-5 rounded-2xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gray-800 pb-3">
+                    <div>
+                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                            OSCILOSCOPIO EN TIEMPO REAL
+                            <span id="etiquetaTipoOnda" class="text-[11px] bg-gray-800 text-gray-300 px-2.5 py-0.5 rounded-full border border-gray-700">En espera</span>
+                        </h4>
+                        <p class="text-[11px] text-gray-400 mt-0.5">
+                            Leyenda: <span class="text-red-400 font-semibold">● Rojo = Grave</span> | <span class="text-indigo-400 font-semibold">● Violeta = Medio</span> | <span class="text-blue-400 font-semibold">● Azul = Agudo</span>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="frecuenciaActualBadge" class="text-xs font-mono bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-800 text-gray-300">-- Hz</span>
+                        <button onclick="capturarGraficoOnda()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-emerald-600/20">
+                            <span>📸</span> Capturar Onda
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="graficoOsciloscopio"></canvas>
+                </div>
+            </div>
+
+            <!-- GALERÍA DE CAPTURAS COMPARATIVAS -->
+            <div class="glass p-5 rounded-2xl space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                    <div>
+                        <h4 class="font-bold text-sm text-white">📸 Galería de Capturas para Comparación</h4>
+                        <p class="text-[11px] text-gray-400">Guarda distintas mediciones para contrastar visualmente ondas graves (rojas) y agudas (azules).</p>
+                    </div>
+                    <button onclick="limpiarCapturas()" id="btnLimpiarCapturas" class="hidden text-xs text-red-400 hover:underline">Borrar Capturas</button>
+                </div>
+
+                <div id="sinCapturasMsg" class="text-center py-8 text-xs text-gray-500 border border-dashed border-gray-800 rounded-xl">
+                    Aún no has guardado capturas. Emite un sonido frente al micrófono y haz clic en <strong>"📸 Capturar Onda"</strong>.
+                </div>
+
+                <div id="contenedorCapturas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- CONCLUSIÓN Y ANÁLISIS COMPARATIVO -->
+            <div id="seccionConclusion" class="hidden glass p-6 rounded-2xl space-y-3 border border-emerald-500/30 bg-gradient-to-r from-emerald-950/20 to-indigo-950/20">
+                <h4 class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                    <span>📊</span> Conclusión y Análisis Experimental
+                </h4>
+                <p id="textoConclusion" class="text-xs text-gray-300 leading-relaxed"></p>
+                <div class="flex justify-end pt-2">
+                    <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">
+                        Volver al Menú Principal
+                    </button>
+                </div>
+            </div>
+        </section>
 
                     <!-- Experimento 2 -->
                    <!-- VISTA DE EXPERIMENTO 2: ACÚSTICA DE SALAS (MURALLA VS CENTRO) -->
