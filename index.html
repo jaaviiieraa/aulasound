@@ -659,6 +659,185 @@
             document.getElementById('nombre-experimento-activo').innerText = nombre;
             cambiarSeccion('experimento');
 
+            // Parte del experimento 1
+        let frecuenciaDetectada = 0;
+        let tipoOndaActual = "En reposo";
+        let contadorCapturas = 0;
+        let listaCapturas = [];
+        let chartOsc;
+
+        // Inicializar gráfico del osciloscopio en el Experimento 1
+        function inicializarGraficoOsciloscopio() {
+            const ctxOsc = document.getElementById('graficoOsciloscopio');
+            if(!ctxOsc) return;
+
+            if(chartOsc) chartOsc.destroy();
+
+            chartOsc = new Chart(ctxOsc.getContext('2d'), {
+                type: 'line',
+                data: { 
+                    labels: Array.from({length: 90}, (_, i) => i), 
+                    datasets: [{ 
+                        data: Array(90).fill(0), 
+                        borderColor: '#6366f1', 
+                        borderWidth: 2.5, 
+                        tension: 0.35, 
+                        pointRadius: 0 
+                    }] 
+                },
+                options: { 
+                    animation: false, 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { display: false }, 
+                        y: { min: -1, max: 1, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#9ca3af' } } 
+                    } 
+                }
+            });
+
+            if(microfonoActivo) iniciarBucleAudioEnVivo();
+        }
+
+        // Bucle en tiempo real para detección de frecuencias y cambio de color cromático (Rojo vs Azul)
+        function iniciarBucleAudioEnVivo() {
+            if(!microfonoActivo || !analyser || !audioContext) return;
+            const timeData = new Uint8Array(analyser.fftSize);
+            const freqData = new Uint8Array(analyser.frequencyBinCount);
+            const sampleRate = audioContext.sampleRate;
+            
+            function actualizar() {
+                if(document.getElementById('vista-experimento').classList.contains('hidden')) return;
+                
+                analyser.getByteTimeDomainData(timeData);
+                const ondaNormalizada = Array.from(timeData.slice(0, 90)).map(v => (v - 128) / 128);
+                
+                analyser.getByteFrequencyData(freqData);
+                let maxVal = -1;
+                let maxIndex = -1;
+                for(let i = 1; i < freqData.length; i++) {
+                    if(freqData[i] > maxVal) {
+                        maxVal = freqData[i];
+                        maxIndex = i;
+                    }
+                }
+
+                const etiqueta = document.getElementById('etiquetaTipoOnda');
+                const badgeFreq = document.getElementById('frecuenciaActualBadge');
+                let colorLinea = '#6366f1';
+
+                if(etiqueta && badgeFreq && maxVal > 45) {
+                    frecuenciaDetectada = Math.round(maxIndex * (sampleRate / analyser.fftSize));
+                    badgeFreq.innerText = `${frecuenciaDetectada} Hz`;
+
+                    if(frecuenciaDetectada < 380) {
+                        colorLinea = '#ef4444'; // Rojo para graves
+                        tipoOndaActual = "Onda Grave (Roja)";
+                        etiqueta.innerText = "🔴 Onda Grave";
+                        etiqueta.className = "text-[11px] bg-red-500/20 text-red-400 px-2.5 py-0.5 rounded-full border border-red-500/30 font-medium";
+                    } else if(frecuenciaDetectada > 950) {
+                        colorLinea = '#3b82f6'; // Azul para agudos
+                        tipoOndaActual = "Onda Aguda (Azul)";
+                        etiqueta.innerText = "🔵 Onda Aguda";
+                        etiqueta.className = "text-[11px] bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30 font-medium";
+                    } else {
+                        colorLinea = '#8b5cf6'; // Violeta para medios
+                        tipoOndaActual = "Onda Media (Violeta)";
+                        etiqueta.innerText = "🟣 Frecuencia Media";
+                        etiqueta.className = "text-[11px] bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30 font-medium";
+                    }
+                } else if(badgeFreq && etiqueta) {
+                    badgeFreq.innerText = "Silencio";
+                    etiqueta.innerText = "En espera de sonido...";
+                    etiqueta.className = "text-[11px] bg-gray-800 text-gray-400 px-2.5 py-0.5 rounded-full border border-gray-700";
+                }
+
+                if(chartOsc) {
+                    chartOsc.data.datasets[0].data = ondaNormalizada;
+                    chartOsc.data.datasets[0].borderColor = colorLinea;
+                    chartOsc.update();
+                }
+
+                requestAnimationFrame(actualizar);
+            }
+            actualizar();
+        }
+
+        // Función para capturar instantánea de la onda y mostrarla en la galería
+        function capturarGraficoOnda() {
+            if(!chartOsc) return;
+            contadorCapturas++;
+            
+            const sinCap = document.getElementById('sinCapturasMsg');
+            const btnLimpiar = document.getElementById('btnLimpiarCapturas');
+            const secConc = document.getElementById('seccionConclusion');
+            if(sinCap) sinCap.classList.add('hidden');
+            if(btnLimpiar) btnLimpiar.classList.remove('hidden');
+            if(secConc) secConc.classList.remove('hidden');
+
+            const imagenURL = chartOsc.toBase64Image();
+            const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const freqTexto = frecuenciaDetectada > 0 ? `${frecuenciaDetectada} Hz` : "Sin señal";
+
+            listaCapturas.push(tipoOndaActual);
+
+            let badgeColor = "bg-indigo-500/20 text-indigo-300 border-indigo-500/30";
+            if(tipoOndaActual.includes("Grave")) badgeColor = "bg-red-500/20 text-red-400 border-red-500/30";
+            if(tipoOndaActual.includes("Aguda")) badgeColor = "bg-blue-500/20 text-blue-400 border-blue-500/30";
+
+            const tarjeta = document.createElement('div');
+            tarjeta.className = "bg-gray-900/80 border border-gray-800 rounded-xl p-3 space-y-2.5 shadow-md";
+            tarjeta.innerHTML = `
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-white">Captura #${contadorCapturas}</span>
+                    <span class="text-[10px] text-gray-400">${hora}</span>
+                </div>
+                <div class="bg-[#0b0f19] rounded-lg p-2 border border-gray-800/80">
+                    <img src="${imagenURL}" alt="Captura de onda" class="w-full h-28 object-contain">
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-[10px] px-2 py-0.5 rounded-full border ${badgeColor}">${tipoOndaActual}</span>
+                    <span class="text-xs font-mono font-semibold text-gray-300">${freqTexto}</span>
+                </div>
+            `;
+
+            const contenedor = document.getElementById('contenedorCapturas');
+            if(contenedor) contenedor.prepend(tarjeta);
+            actualizarConclusionDinamica();
+        }
+
+        // Generador de conclusión automática pedagógica
+        function actualizarConclusionDinamica() {
+            const txt = document.getElementById('textoConclusion');
+            if(!txt) return;
+            let hasGrave = listaCapturas.some(c => c.includes("Grave"));
+            let hasAguda = listaCapturas.some(c => c.includes("Aguda"));
+
+            if (hasGrave && hasAguda) {
+                txt.innerHTML = `✅ <b>Análisis completado con éxito:</b> Como se puede observar al comparar las imágenes capturadas en la galería, existe una diferencia evidente en el comportamiento espacial y temporal de las ondas. La <b>onda grave (marcada en rojo)</b> presenta crestas y valles amplios con un período largo (baja frecuencia). En contraste, la <b>onda aguda (marcada en azul)</b> muestra crestas y valles altamente comprimidos y densos en el eje temporal (alta frecuencia). Esto valida empíricamente la relación inversa entre el período y la frecuencia perceptual del tono.`;
+            } else if (hasGrave) {
+                txt.innerHTML = `📌 <b>Captura registrada (${contadorCapturas}):</b> Has registrado una onda de baja frecuencia (Grave). Se observa una menor densidad de ciclos por unidad de tiempo. <em>Prueba ahora emitiendo un sonido agudo o usando el botón azul para comparar las diferencias.</em>`;
+            } else if (hasAguda) {
+                txt.innerHTML = `📌 <b>Captura registrada (${contadorCapturas}):</b> Has registrado una onda de alta frecuencia (Aguda). Se observa una compresión temporal evidente. <em>Prueba ahora emitiendo un sonido grave para completar la contrastación visual.</em>`;
+            } else {
+                txt.innerHTML = `Analiza las capturas anteriores para contrastar la diferencia visual entre frecuencias graves y agudas.`;
+            }
+        }
+
+        function limpiarCapturas() {
+            contadorCapturas = 0;
+            listaCapturas = [];
+            const cont = document.getElementById('contenedorCapturas');
+            const sinCap = document.getElementById('sinCapturasMsg');
+            const btnLimpiar = document.getElementById('btnLimpiarCapturas');
+            const secConc = document.getElementById('seccionConclusion');
+            if(cont) cont.innerHTML = "";
+            if(sinCap) sinCap.classList.remove('hidden');
+            if(btnLimpiar) btnLimpiar.classList.add('hidden');
+            if(secConc) secConc.classList.add('hidden');
+        }
+
             // Variables de estado para el Experimento 2 (Acústica de Salas)
         let posicionSeleccionada = null; // 'muralla' o 'centro'
         let medicionMurallaGuardada = null;
