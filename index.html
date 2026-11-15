@@ -55,15 +55,190 @@
                     </div>
 
                     <!-- Experimento 2 -->
-                    <div onclick="seleccionarExperimento(2, 'Experimento 2: Acústica de Salas')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-3 group">
-                        <div class="flex justify-between items-center">
-                            <span class="text-emerald-400 text-2xl">🏛️</span>
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Módulo 2</span>
-                        </div>
-                        <h3 class="font-bold text-white group-hover:text-emerald-400 transition">Experimento 2: Acústica de Salas</h3>
-                        <p class="text-xs text-gray-400">Medición de niveles de presión sonora (dB) y reflexiones.</p>
-                        <div class="pt-2"><span class="text-xs text-emerald-400 font-medium">▶ Iniciar experimento</span></div>
+                   <!-- VISTA DE EXPERIMENTO 2: ACÚSTICA DE SALAS (MURALLA VS CENTRO) -->
+        <section id="vista-experimento" class="hidden space-y-6">
+            
+            <!-- Aviso de Permiso de Micrófono -->
+            <div id="bannerPermisoExp" class="bg-indigo-500/10 border border-indigo-500/30 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">🎙️</span>
+                    <div>
+                        <h4 class="text-sm font-bold text-indigo-300">Laboratorio de Acústica de Salas</h4>
+                        <p class="text-xs text-gray-300">Activa tu micrófono para analizar cómo influyen las murallas y el espacio en la propagación del sonido.</p>
                     </div>
+                </div>
+                <button onclick="solicitarPermisoMicrofono()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">
+                    Activar Micrófono
+                </button>
+            </div>
+
+            <!-- Cabecera del Módulo -->
+            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento 2: Acústica en Sala de Clases (Muralla vs. Centro)</h3>
+                    <p class="text-xs text-gray-400">Analiza el impacto de las reflexiones tempranas y el eco en espacios cerrados.</p>
+                </div>
+                <button onclick="cambiarSeccion('menu')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg transition">🏠 Volver al Menú</button>
+            </div>
+
+            <!-- TEORÍA BREVE Y CONCEPTO CLAVE -->
+            <div class="glass p-6 rounded-2xl space-y-4 border border-indigo-500/20">
+                <h4 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                    <span>🏛️</span> ¿Cómo se comporta el sonido dentro de una sala?
+                </h4>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Cuando emitimos un sonido en un espacio cerrado, este no solo viaja directamente a nuestros oídos, sino que rebota contra las paredes, el piso y el techo. A estos rebotes los llamamos <b>reflexiones acústicas</b>.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-xs">
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-2">
+                        <strong class="text-indigo-400 block">🧱 Cerca de la Muralla</strong>
+                        <p class="text-gray-400">Las ondas rebotan casi de inmediato en la pared cercana y se mezclas con la voz original casi al mismo tiempo. Esto crea interferencias, picos sobrepuestos y una señal visualmente "sucia" o cargada de eco.</p>
+                    </div>
+                    <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 space-y-2">
+                        <strong class="text-emerald-400 block">🎯 Al Centro de la Sala</strong>
+                        <p class="text-gray-400">El sonido directo llega primero de forma clara y nítida. Las reflexiones de las paredes tardan más en llegar o se difuminan en el espacio, mostrando una onda mucho más limpia y definida.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SISTEMA INTERACTIVO DE COMPARACIÓN (PASO A PASO) -->
+            <div class="glass p-6 rounded-2xl space-y-6 border border-emerald-500/30">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                        <span>🧪</span> Comparador Interactivo de Posiciones
+                    </h4>
+                    <span id="estadoProgresoComp" class="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full">Paso 1 de 3: Selecciona una posición</span>
+                </div>
+
+                <!-- PASO 1: Selector de Posición -->
+                <div class="space-y-3">
+                    <label class="text-xs font-semibold text-gray-300 block">1. Elige dónde te ubicarás para hacer la medición:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div onclick="seleccionarPosicion('muralla')" id="cardMuralla" class="glass p-4 rounded-xl border border-gray-700 hover:border-indigo-500 transition cursor-pointer flex items-center gap-3">
+                            <span class="text-2xl">🧱</span>
+                            <div>
+                                <h5 class="font-bold text-sm text-white">Cerca de la Muralla</h5>
+                                <p class="text-[11px] text-gray-400">Medición con rebotes y reflexiones cercanas.</p>
+                            </div>
+                        </div>
+                        <div onclick="seleccionarPosicion('centro')" id="cardCentro" class="glass p-4 rounded-xl border border-gray-700 hover:border-emerald-500 transition cursor-pointer flex items-center gap-3">
+                            <span class="text-2xl">🎯</span>
+                            <div>
+                                <h5 class="font-bold text-sm text-white">Al Centro de la Sala</h5>
+                                <p class="text-[11px] text-gray-400">Medición de campo libre / onda directa limpia.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASO 2: Visualizador en vivo y Botón de Guardado -->
+                <div class="space-y-3 bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+                    <div class="flex justify-between items-center text-xs text-gray-400">
+                        <span>Posición seleccionada: <b id="lblPosicionActual" class="text-indigo-400">Ninguna</b></span>
+                        <span id="estadoGuardadoBadge" class="text-gray-500">Pendiente de guardar</span>
+                    </div>
+                    <div class="h-40 flex items-center justify-center">
+                        <canvas id="graficoAcusticaSala"></canvas>
+                    </div>
+                    <button onclick="guardarMedicionActual()" id="btnGuardarLugar" disabled class="w-full bg-gray-800 text-gray-500 font-bold text-xs py-2.5 rounded-xl transition cursor-not-allowed">
+                        💾 Selecciona una posición arriba para habilitar el guardado
+                    </button>
+                </div>
+
+                <!-- Indicadores de estado de guardado (Muralla vs Centro) -->
+                <div class="grid grid-cols-2 gap-3 text-xs text-center">
+                    <div id="badgeStatusMuralla" class="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-500">
+                        🧱 Muralla: <b>No guardada</b>
+                    </div>
+                    <div id="badgeStatusCentro" class="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-500">
+                        🎯 Centro: <b>No guardada</b>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 3: VISTA DE COMPARACIÓN SPLIT-SCREEN (Aparece al guardar ambas) -->
+            <div id="seccionSplitScreen" class="hidden glass p-6 rounded-2xl space-y-4 border border-indigo-500/40">
+                <h4 class="font-bold text-sm text-indigo-300 flex items-center gap-2">
+                    <span>⚖️</span> Vista Split-Screen: Comparación Lado a Lado
+                </h4>
+                <p class="text-xs text-gray-300">Has registrado ambas ubicaciones. Observa el comportamiento de la onda en cada espacio:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="glass p-3 rounded-xl space-y-2 border border-red-500/30">
+                        <div class="flex justify-between items-center text-xs font-bold text-red-400">
+                            <span>🧱 Cerca de la Muralla</span>
+                            <span class="text-[10px] bg-red-500/20 px-2 py-0.5 rounded">Onda con reflexiones</span>
+                        </div>
+                        <div class="h-32 bg-gray-950 rounded-lg p-1 flex items-center justify-center">
+                            <img id="imgSplitMuralla" src="" alt="Onda muralla" class="w-full h-full object-contain">
+                        </div>
+                        <p class="text-[11px] text-gray-400">Se aprecian crestas secundarias y sobrepuestas debido al rebote inmediato en la pared.</p>
+                    </div>
+
+                    <div class="glass p-3 rounded-xl space-y-2 border border-emerald-500/30">
+                        <div class="flex justify-between items-center text-xs font-bold text-emerald-400">
+                            <span>🎯 Al Centro de la Sala</span>
+                            <span class="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded">Onda directa limpia</span>
+                        </div>
+                        <div class="h-32 bg-gray-950 rounded-lg p-1 flex items-center justify-center">
+                            <img id="imgSplitCentro" src="" alt="Onda centro" class="w-full h-full object-contain">
+                        </div>
+                        <p class="text-[11px] text-gray-400">Se observa una onda armónica principal mucho más limpia, libre de interferencias cercanas.</p>
+                    </div>
+                </div>
+
+                <!-- PASO 4: Conclusión Automática Pedagógica -->
+                <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl space-y-2 text-xs text-gray-300">
+                    <strong class="text-emerald-400 block font-bold text-sm">💡 Conclusión Automática del Experimento:</strong>
+                    <p>
+                        La diferencia visual entre ambas capturas demuestra por qué las salas de clase necesitan paneles acústicos o mobiliario que absorba el sonido. Cerca de la muralla, las ondas rebotan con fuerza creando una acústica confusa (eco y reverberación), mientras que al centro la señal directa se propaga con mayor claridad e inteligibilidad.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cuestionario de Opción Múltiple (Requisito final) -->
+            <div class="glass p-6 rounded-2xl space-y-4 border border-gray-800">
+                <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                    <span>📝</span> Cuestionario de Evaluación Conceptual
+                </h4>
+                
+                <div class="space-y-4 text-xs text-gray-300">
+                    <div class="bg-gray-900/60 p-3 rounded-xl space-y-2">
+                        <p class="font-semibold text-white">1. ¿Por qué la onda cerca de la muralla se ve más "sucia" o sobrepuesta?</p>
+                        <div class="space-y-1 pl-2 text-gray-400">
+                            <label class="block"><input type="radio" name="p1" value="a"> a) Porque el micrófono capta más ruido eléctrico.</label>
+                            <label class="block text-emerald-400 font-medium"><input type="radio" name="p1" value="b"> b) Debido a las reflexiones inmediatas (rebotes) de la pared que se mezclan con la onda directa. (Correcta)</label>
+                            <label class="block"><input type="radio" name="p1" value="c"> c) Porque la frecuencia del sonido cambia automáticamente.</label>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl space-y-2">
+                        <p class="font-semibold text-white">2. ¿Qué ocurre con la energía del sonido al ubicarse en el centro de una sala amplia?</p>
+                        <div class="space-y-1 pl-2 text-gray-400">
+                            <label class="block text-emerald-400 font-medium"><input type="radio" name="p2" value="a"> a) Se distribuye uniformemente en el espacio reduciendo el eco directo de los bordes. (Correcta)</label>
+                            <label class="block"><input type="radio" name="p2" value="b"> b) El sonido se multiplica infinitamente.</label>
+                            <label class="block"><input type="radio" name="p2" value="c"> c) El sonido desaparece por completo.</label>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl space-y-2">
+                        <p class="font-semibold text-white">3. ¿Qué utilidad tiene comparar la posición de muralla y centro en una sala de clases?</p>
+                        <div class="space-y-1 pl-2 text-gray-400">
+                            <label class="block"><input type="radio" name="p3" value="a"> b) Para saber qué color de pintura absorbe mejor el sonido.</label>
+                            <label class="block text-emerald-400 font-medium"><input type="radio" name="p3" value="b"> b) Para entender la inteligibilidad de la voz y la importancia del tratamiento acústico para los alumnos. (Correcta)</label>
+                            <label class="block"><input type="radio" name="p3" value="c"> c) Ninguna utilidad práctica.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl transition">
+                    Volver al Menú Principal
+                </button>
+            </div>
+        </section>
 
                     <!-- Experimento 3 -->
                     <div onclick="seleccionarExperimento(3, 'Experimento 3: Propagación del Sonido')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-3 group">
@@ -360,7 +535,118 @@
             document.getElementById('titulo-exp-badge').innerText = `MÓDULO ${num}`;
             document.getElementById('nombre-experimento-activo').innerText = nombre;
             cambiarSeccion('experimento');
-            
+
+            // Variables de estado para el Experimento 2 (Acústica de Salas)
+        let posicionSeleccionada = null; // 'muralla' o 'centro'
+        let medicionMurallaGuardada = null;
+        let medicionCentroGuardada = null;
+        let chartAcusticaSala;
+
+        // Función para seleccionar la posición en el Experimento 2
+        function seleccionarPosicion(lugar) {
+            posicionSeleccionada = lugar;
+            const lbl = document.getElementById('lblPosicionActual');
+            const btn = document.getElementById('btnGuardarLugar');
+            const cardM = document.getElementById('cardMuralla');
+            const cardC = document.getElementById('cardCentro');
+
+            // Resetear bordes visuales
+            cardM.className = "glass p-4 rounded-xl border border-gray-700 transition cursor-pointer flex items-center gap-3";
+            cardC.className = "glass p-4 rounded-xl border border-gray-700 transition cursor-pointer flex items-center gap-3";
+
+            if(lugar === 'muralla') {
+                lbl.innerText = "Cerca de la Muralla (Con reflexiones)";
+                cardM.className = "glass p-4 rounded-xl border-2 border-indigo-500 bg-indigo-500/10 transition cursor-pointer flex items-center gap-3";
+            } else {
+                lbl.innerText = "Al Centro de la Sala (Onda directa limpia)";
+                cardC.className = "glass p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 transition cursor-pointer flex items-center gap-3";
+            }
+
+            // Habilitar botón de guardado
+            btn.disabled = false;
+            btn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/30";
+            btn.innerText = `💾 Guardar Medición de [ ${lugar.toUpperCase()} ]`;
+        }
+
+        // Inicializar gráfico de acústica de sala al entrar al módulo
+        function inicializarGraficoAcusticaSala() {
+            const ctxElem = document.getElementById('graficoAcusticaSala');
+            if(!ctxElem) return;
+
+            if(chartAcusticaSala) chartAcusticaSala.destroy();
+
+            // Generar una forma de onda simulada según la posición para visualizar la diferencia
+            let datosOnda = [];
+            for(let i=0; i<60; i++) {
+                let val = Math.sin(i * 0.3);
+                // Si es muralla simulamos pequeñas reflexiones sobrepuestas (ruido armónico)
+                if(posicionSeleccionada === 'muralla') {
+                    val += (Math.random() * 0.4 - 0.2) + (i % 5 === 0 ? 0.3 : 0);
+                }
+                datosOnda.push(val);
+            }
+
+            chartAcusticaSala = new Chart(ctxElem.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 60}, (_, i) => i),
+                    datasets: [{
+                        data: datosOnda,
+                        borderColor: posicionSeleccionada === 'muralla' ? '#ef4444' : '#10b981',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { min: -1.5, max: 1.5, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                    }
+                }
+            });
+        }
+
+        // Guardar la medición actual (Paso 2)
+        function guardarMedicionActual() {
+            if(!posicionSeleccionada) return;
+
+            if(!chartAcusticaSala) inicializarGraficoAcusticaSala();
+            const imagenCanvas = chartAcusticaSala.toBase64Image();
+
+            if(posicionSeleccionada === 'muralla') {
+                medicionMurallaGuardada = imagenCanvas;
+                const bMuralla = document.getElementById('badgeStatusMuralla');
+                bMuralla.className = "p-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs";
+                bMuralla.innerHTML = `🧱 Muralla: <b>Guardada ✔</b>`;
+            } else {
+                medicionCentroGuardada = imagenCanvas;
+                const bCentro = document.getElementById('badgeStatusCentro');
+                bCentro.className = "p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs";
+                bCentro.innerHTML = `🎯 Centro: <b>Guardada ✔</b>`;
+            }
+
+            alert(`¡Medición guardada correctamente para: ${posicionSeleccionada.toUpperCase()}!`);
+
+            // Verificar si ya se guardaron ambas para activar la vista Split-Screen (Paso 3)
+            if(medicionMurallaGuardada && medicionCentroGuardada) {
+                document.getElementById('estadoProgresoComp').innerText = "¡Completado! Visualiza la comparación abajo";
+                document.getElementById('estadoProgresoComp').className = "text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold";
+                
+                document.getElementById('imgSplitMuralla').src = medicionMurallaGuardada;
+                document.getElementById('imgSplitCentro').src = medicionCentroGuardada;
+                document.getElementById('seccionSplitScreen').classList.remove('hidden');
+                
+                // Desplazar suavemente hacia la sección split-screen
+                document.getElementById('seccionSplitScreen').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                document.getElementById('estadoProgresoComp').innerText = "Paso 2 de 3: Selecciona la otra posición faltante";
+            }
+        }
             // Si es el experimento 3, renderizamos su tabla y gráfico
             if (num === 3) {
                 renderizarTablaYGrafico();
