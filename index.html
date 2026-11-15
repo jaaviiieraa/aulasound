@@ -10,7 +10,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -20,8 +20,8 @@
         <div class="flex items-center space-x-3">
             <div class="bg-indigo-600 p-2 rounded-xl text-white font-bold">🔊</div>
             <div>
-                <h1 class="font-bold text-lg tracking-wide text-white">AulaSound <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">EXPERIMENTO 01</span></h1>
-                <p class="text-xs text-gray-400">Laboratorio Virtual de Física Acústica</p>
+                <h1 class="font-bold text-lg tracking-wide text-white">AulaSound <span id="titulo-exp-badge" class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">MENÚ PRINCIPAL</span></h1>
+                <p class="text-xs text-gray-400">Universidad Mayor - Ingeniería Civil Industrial</p>
             </div>
         </div>
         <div class="flex items-center space-x-4">
@@ -35,24 +35,51 @@
 
         <!-- MENÚ PRINCIPAL -->
         <section id="vista-menu" class="space-y-6">
-            <div class="glass p-8 rounded-2xl text-center space-y-4">
-                <h2 class="text-3xl font-extrabold text-white">Bienvenido al Entorno Experimental AulaSound</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Selecciona el módulo de experimentación acústica que deseas realizar para comenzar el registro de datos, análisis en tiempo real y validación teórica.</p>
+            <div class="glass p-8 rounded-2xl text-center space-y-4 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 opacity-10 pointer-events-none">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80" class="w-96 rounded-full" alt="Fondo acústica">
+                </div>
+                <h2 class="text-3xl font-extrabold text-white">Entorno Experimental AulaSound</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Selecciona uno de los tres módulos experimentales de acústica para iniciar tus mediciones, análisis en tiempo real y validación teórica.</p>
+                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-                    <div onclick="cambiarSeccion('experimento')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-2 group">
-                        <span class="text-indigo-400 text-2xl">📈</span>
-                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">1. Frecuencia y Tono</h3>
-                        <p class="text-xs text-gray-400">Osciloscopio interactivo y Transformada Rápida de Fourier (FFT).</p>
+                    <!-- Experimento 1 -->
+                    <div onclick="seleccionarExperimento(1, 'Experimento 1: Frecuencia y Ondas')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-3 group">
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-400 text-2xl">📈</span>
+                            <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">Módulo 1</span>
+                        </div>
+                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">Experimento 1: Frecuencia y Ondas</h3>
+                        <p class="text-xs text-gray-400">Osciloscopio interactivo y Transformada Rápida de Fourier (FFT) para análisis espectral.</p>
+                        <div class="pt-2">
+                            <span class="text-xs text-indigo-400 font-medium flex items-center gap-1">▶ Iniciar experimento</span>
+                        </div>
                     </div>
-                    <div onclick="cambiarSeccion('experimento')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-2 group">
-                        <span class="text-indigo-400 text-2xl">🏛️</span>
-                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">2. Acústica de Salas</h3>
-                        <p class="text-xs text-gray-400">Medición de niveles de presión sonora (dB) y reflexiones.</p>
+
+                    <!-- Experimento 2 -->
+                    <div onclick="seleccionarExperimento(2, 'Experimento 2: Acústica de Salas')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-3 group">
+                        <div class="flex justify-between items-center">
+                            <span class="text-emerald-400 text-2xl">🏛️</span>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Módulo 2</span>
+                        </div>
+                        <h3 class="font-bold text-white group-hover:text-emerald-400 transition">Experimento 2: Acústica de Salas</h3>
+                        <p class="text-xs text-gray-400">Medición de niveles de presión sonora (dB), reflexiones directas y secundarias.</p>
+                        <div class="pt-2">
+                            <span class="text-xs text-emerald-400 font-medium flex items-center gap-1">▶ Iniciar experimento</span>
+                        </div>
                     </div>
-                    <div onclick="cambiarSeccion('experimento')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-2 group">
-                        <span class="text-indigo-400 text-2xl">📏</span>
-                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition">3. Propagación Sonora</h3>
-                        <p class="text-xs text-gray-400">Estudio de la ley del inverso del cuadrado con distancia.</p>
+
+                    <!-- Experimento 3 -->
+                    <div onclick="seleccionarExperimento(3, 'Experimento 3: Propagación del Sonido')" class="glass p-6 rounded-xl hover:border-indigo-500 transition cursor-pointer text-left space-y-3 group">
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-400 text-2xl">📏</span>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Módulo 3</span>
+                        </div>
+                        <h3 class="font-bold text-white group-hover:text-amber-400 transition">Experimento 3: Propagación del Sonido</h3>
+                        <p class="text-xs text-gray-400">Estudio de la ley del inverso del cuadrado y atenuación de la señal con la distancia.</p>
+                        <div class="pt-2">
+                            <span class="text-xs text-amber-400 font-medium flex items-center gap-1">▶ Iniciar experimento</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,13 +87,27 @@
 
         <!-- VISTA DE EXPERIMENTO -->
         <section id="vista-experimento" class="hidden space-y-6">
+            
+            <!-- Barra superior del experimento con selector de audio integrado -->
+            <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 id="nombre-experimento-activo" class="font-bold text-lg text-white">Experimento activo</h3>
+                    <p class="text-xs text-gray-400">Registra tus 5 repeticiones y analiza el comportamiento físico en tiempo real.</p>
+                </div>
+                <!-- Reproductor o Generador de Sonido Simulado -->
+                <div class="bg-gray-900/80 px-4 py-2.5 rounded-xl border border-gray-800 flex items-center gap-3">
+                    <span class="text-xs text-indigo-400 font-medium">🎵 Generador de Audio:</span>
+                    <button onclick="reproducirTonoPrueba()" id="btnAudio" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition">🔊 Reproducir Tono Test (440Hz)</button>
+                </div>
+            </div>
+
             <!-- Gráficos Superiores -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Osciloscopio -->
                 <div class="glass p-4 rounded-xl lg:col-span-2 space-y-3">
                     <div class="flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <span class="font-semibold text-gray-200">OSCILOSCOPIO (TIEMPO)</span>
-                        <span>Amplitud / Tiempo</span>
+                        <span class="font-semibold text-gray-200">OSCILOSCOPIO (SEÑAL EN TIEMPO REAL)</span>
+                        <span class="text-indigo-400">Onda Acústica</span>
                     </div>
                     <div class="h-48 flex items-center justify-center">
                         <canvas id="graficoOsciloscopio"></canvas>
@@ -87,7 +128,7 @@
             <!-- Panel de Control y Registro -->
             <div class="glass p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-xs text-gray-400">
-                    Capture 5 repeticiones consecutivas para completar la tabla experimental.
+                    Capture 5 repeticiones consecutivas para completar la tabla experimental del laboratorio.
                 </div>
                 <button onclick="registrarMedicion()" id="btnRegistrar" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium transition flex items-center gap-2 shadow-lg shadow-indigo-600/30">
                     <span>📌</span> REGISTRAR MEDICIÓN (N° <span id="contadorRep">1</span>/5)
@@ -97,7 +138,7 @@
             <!-- Tabla de Repeticiones -->
             <div class="glass rounded-xl overflow-hidden">
                 <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-                    <h3 class="font-bold text-sm text-white">TABLA DE REPETICIONES</h3>
+                    <h3 class="font-bold text-sm text-white">TABLA DE REPETICIONES EXPERIMENTALES</h3>
                     <button onclick="limpiarTabla()" class="text-xs text-red-400 hover:underline">Limpiar Tabla</button>
                 </div>
                 <div class="overflow-x-auto">
@@ -111,68 +152,58 @@
                             </tr>
                         </thead>
                         <tbody id="cuerpoTabla" class="divide-y divide-gray-800 text-gray-300">
-                            <tr>
-                                <td class="p-3 font-medium">1</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-right text-gray-500">Pendiente</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-medium">2</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-right text-gray-500">Pendiente</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-medium">3</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-right text-gray-500">Pendiente</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-medium">4</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-right text-gray-500">Pendiente</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-medium">5</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-gray-500">-----</td>
-                                <td class="p-3 text-right text-gray-500">Pendiente</td>
-                            </tr>
+                            <tr><td class="p-3 font-medium">1</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
+                            <tr><td class="p-3 font-medium">2</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
+                            <tr><td class="p-3 font-medium">3</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
+                            <tr><td class="p-3 font-medium">4</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
+                            <tr><td class="p-3 font-medium">5</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-gray-500">-----</td><td class="p-3 text-right text-gray-500">Pendiente</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Resumen Estadístico y Gráfico Comparativo -->
+            <!-- Resumen Estadístico, Hipótesis con Imagen y Gráfico Comparativo -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass p-5 rounded-xl space-y-4">
-                    <h4 class="font-bold text-sm text-white">HIPÓTESIS PLANTEADA</h4>
-                    <div class="bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs text-gray-400">
-                        ¿Se seguirá la hipótesis en Fase II de atenuación lineal en campo libre?
+                
+                <!-- Tarjeta de Hipótesis con Imagen Conceptual -->
+                <div class="glass p-5 rounded-xl space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <!-- Icono de bombilla o cerebro conceptual estilo tus capturas -->
+                            <div class="bg-amber-500/20 p-2 rounded-lg text-amber-400 text-sm">💡</div>
+                            <h4 class="font-bold text-sm text-white">HIPÓTESIS PLANTEADA</h4>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
+                            Se espera que la atenuación de la señal acústica cumpla con el modelo teórico inverso en función de la distancia al emisor.
+                        </p>
+                        <!-- Imagen ilustrativa integrada -->
+                        <div class="rounded-lg overflow-hidden border border-gray-800 bg-gray-900/50 p-2 text-center">
+                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" class="w-full h-28 object-cover rounded-md opacity-80" alt="Esquema conceptual">
+                            <span class="text-[10px] text-gray-400 mt-1 block">Modelo analítico de propagación</span>
+                        </div>
                     </div>
-                    <div class="pt-2">
+
+                    <div class="pt-2 border-t border-gray-800">
                         <span class="text-xs text-gray-400">ESTADÍSTICAS DE MEDICIONES</span>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-xl font-bold text-indigo-400">72.00 dB</span>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-xl font-bold text-indigo-400" id="promedioEst">72.00 dB</span>
                             <span class="text-sm font-semibold text-emerald-400">± 3.63 dB</span>
                         </div>
-                        <p class="text-[11px] text-gray-500 mt-1">Promedio empírico y Desviación estándar</p>
+                        <p class="text-[11px] text-gray-500">Promedio empírico y desviación estándar</p>
                     </div>
                 </div>
 
+                <!-- Gráfico Comparativo -->
                 <div class="glass p-5 rounded-xl lg:col-span-2 space-y-4">
                     <div class="flex justify-between items-center">
                         <h4 class="font-bold text-sm text-white">Gráfico Comparativo: Teórico vs. Empírico (5 Repeticiones)</h4>
-                        <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-500/30">Análisis Gráfico</span>
+                        <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-500/30">Análisis Analítico</span>
                     </div>
                     <div class="h-44 flex items-center justify-center">
                         <canvas id="graficoComparativo"></canvas>
                     </div>
                     <div class="flex justify-between items-center pt-2">
-                        <button onclick="alert('Informe CSV exportado con éxito.')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+                        <button onclick="alert('Informe CSV exportado con éxito desde AulaSound.')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg transition flex items-center gap-1.5">
                             📄 Exportar Informe CSV
                         </button>
                         <button onclick="cambiarSeccion('menu')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">
@@ -191,14 +222,14 @@
             <div id="paso1" class="space-y-4">
                 <div class="bg-indigo-600/20 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 text-xl font-bold border border-indigo-500/30">🔊</div>
                 <h3 class="text-xl font-bold text-white">¡Bienvenido a AulaSound!</h3>
-                <p class="text-sm text-gray-300 leading-relaxed">Laboratorio interactivo de acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.</p>
+                <p class="text-sm text-gray-300 leading-relaxed">Laboratorio interactivo de física acústica para la medición y análisis en tiempo real de propagación sonora, frecuencias y reverberación de salas.</p>
                 <div class="bg-indigo-500/10 border border-indigo-500/20 p-3 rounded-lg text-xs text-indigo-300">
-                    ✨ <b>Módulo científico interactivo:</b> Plantea tus hipótesis, realiza 5 mediciones guiadas y compara resultados con gráficos analíticos.
+                    ✨ <b>Estructura de las 3 Experiencias:</b> Plantea tu hipótesis, realiza 5 mediciones guiadas y contrasta empíricamente con modelos teóricos.
                 </div>
             </div>
             <div class="flex justify-between items-center pt-4 border-t border-gray-800">
                 <button onclick="cerrarTutorial()" class="text-xs text-gray-400 hover:text-white">Saltar Tutorial</button>
-                <button onclick="avanzarPaso()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-xl font-medium transition">Siguiente</button>
+                <button onclick="cerrarTutorial()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-xl font-medium transition">Comenzar Laboratorio</button>
             </div>
         </div>
     </div>
@@ -214,10 +245,17 @@
             { d: 250, db: 58.0 }
         ];
 
+        function seleccionarExperimento(num, nombre) {
+            document.getElementById('titulo-exp-badge').innerText = `MÓDULO ${num}`;
+            document.getElementById('nombre-experimento-activo').innerText = nombre;
+            cambiarSeccion('experimento');
+        }
+
         function cambiarSeccion(seccion) {
             if(seccion === 'menu') {
                 document.getElementById('vista-menu').classList.remove('hidden');
                 document.getElementById('vista-experimento').classList.add('hidden');
+                document.getElementById('titulo-exp-badge').innerText = "MENÚ PRINCIPAL";
             } else {
                 document.getElementById('vista-menu').classList.add('hidden');
                 document.getElementById('vista-experimento').classList.remove('hidden');
@@ -227,7 +265,24 @@
 
         function abrirTutorial() { document.getElementById('modalTutorial').classList.remove('hidden'); }
         function cerrarTutorial() { document.getElementById('modalTutorial').classList.add('hidden'); }
-        function avanzarPaso() { cerrarTutorial(); }
+
+        function reproducirTonoPrueba() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = 440; // 440 Hz (Nota La)
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1.5);
+                alert("Reproduciendo tono de calibración de 440 Hz (1.5 segundos).");
+            } catch(e) {
+                alert("Audio soportado en el navegador.");
+            }
+        }
 
         function registrarMedicion() {
             if(repActual <= 5) {
@@ -241,7 +296,7 @@
                 if(repActual <= 5) {
                     document.getElementById('contadorRep').innerText = repActual;
                 } else {
-                    document.getElementById('btnRegistrar').innerText = "¡Completado!";
+                    document.getElementById('btnRegistrar').innerText = "¡Módulo Completado!";
                     document.getElementById('btnRegistrar').disabled = true;
                     document.getElementById('btnRegistrar').classList.add('opacity-50', 'cursor-not-allowed');
                 }
@@ -303,9 +358,9 @@
             new Chart(ctxComp, {
                 type: 'bar',
                 data: {
-                    labels: ['Medición 1', 'Medición 2', 'Medición 3', 'Medición 4', 'Medición 5'],
+                    labels: ['Repetición 1', 'Repetición 2', 'Repetición 3', 'Repetición 4', 'Repetición 5'],
                     datasets: [
-                        { label: 'Empírico (Acústica)', data: [74.2, 68.5, 64.1, 60.8, 58.0], backgroundColor: '#3b82f6', borderRadius: 4 },
+                        { label: 'Empírico (Medición)', data: [74.2, 68.5, 64.1, 60.8, 58.0], backgroundColor: '#3b82f6', borderRadius: 4 },
                         { label: 'Teórico / Referencia', data: [74, 68, 64, 60, 57], backgroundColor: '#6366f1', borderRadius: 4 }
                     ]
                 },
