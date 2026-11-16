@@ -509,21 +509,23 @@
                 osc.stop(ctx.currentTime + 1.5);
             } catch(e) { alert("Audio activado."); }
         }
-
-        function inicializarGraficoOsciloscopio() {
+function inicializarGraficoOsciloscopio() {
             const ctxOsc = document.getElementById('graficoOsciloscopio');
             if(!ctxOsc) return;
             if(chartOsc) chartOsc.destroy();
 
+            // Aumentamos a 200 puntos para visualizar mejor la compresión entre graves y agudos
+            const totalPuntos = 200;
+
             chartOsc = new Chart(ctxOsc.getContext('2d'), {
                 type: 'line',
                 data: { 
-                    labels: Array.from({length: 90}, (_, i) => i), 
+                    labels: Array.from({length: totalPuntos}, (_, i) => i), 
                     datasets: [{ 
-                        data: Array(90).fill(0), 
+                        data: Array(totalPuntos).fill(0), 
                         borderColor: '#6366f1', 
                         borderWidth: 2.5, 
-                        tension: 0.35, 
+                        tension: 0.4, 
                         pointRadius: 0 
                     }] 
                 },
@@ -544,15 +546,36 @@
 
         function iniciarBucleAudioEnVivo() {
             if(!microfonoActivo || !analyser || !audioContext) return;
+            analyser.fftSize = 2048; // Mayor resolución para captar bien graves y agudos
             const timeData = new Uint8Array(analyser.fftSize);
             const freqData = new Uint8Array(analyser.frequencyBinCount);
             const sampleRate = audioContext.sampleRate;
+            const totalPuntos = 200;
+            const gananciaVisual = 3.8; // Multiplica la amplitud para que la fluctuación sea bien visible
             
             function actualizar() {
                 if(document.getElementById('vista-experimento-1').classList.contains('hidden')) return;
                 
                 analyser.getByteTimeDomainData(timeData);
-                const ondaNormalizada = Array.from(timeData.slice(0, 90)).map(v => (v - 128) / 128);
+
+                // Buscar punto de cruce por cero para estabilizar la onda en pantalla
+                let inicio = 0;
+                for (let i = 1; i < 300; i++) {
+                    if (timeData[i - 1] < 128 && timeData[i] >= 128) {
+                        inicio = i;
+                        break;
+                    }
+                }
+
+                // Normalizar y amplificar la fluctuación
+                const ondaNormalizada = [];
+                for (let i = 0; i < totalPuntos; i++) {
+                    let valorCrudo = (timeData[inicio + i] - 128) / 128;
+                    let valorAmplificado = valorCrudo * gananciaVisual;
+                    // Limitar entre -1 y 1 para que no se salga del gráfico
+                    valorAmplificado = Math.max(-1, Math.min(1, valorAmplificado));
+                    ondaNormalizada.push(valorAmplificado);
+                }
                 
                 analyser.getByteFrequencyData(freqData);
                 let maxVal = -1, maxIndex = -1;
@@ -564,7 +587,7 @@
                 const badgeFreq = document.getElementById('frecuenciaActualBadge');
                 let colorLinea = '#6366f1';
 
-                if(etiqueta && badgeFreq && maxVal > 45) {
+                if(etiqueta && badgeFreq && maxVal > 35) {
                     frecuenciaDetectada = Math.round(maxIndex * (sampleRate / analyser.fftSize));
                     badgeFreq.innerText = `${frecuenciaDetectada} Hz`;
 
@@ -600,7 +623,8 @@
             }
             actualizar();
         }
-
+        
+            
         function capturarGraficoOnda() {
             if(!chartOsc) return;
             contadorCapturas++;
