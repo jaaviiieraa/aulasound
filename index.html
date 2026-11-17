@@ -313,13 +313,13 @@
                 </div>
             </div>
 
-            <!-- Panel Interactivo de Ingreso de Medidas -->
+            <!-- Panel Interactivo de Ingreso de Medidas con Captura de Micrófono -->
             <div class="glass p-5 rounded-2xl space-y-4 border border-indigo-500/30">
                 <h4 class="font-bold text-sm text-white flex items-center gap-2">
-                    <span>📝</span> Ingresa tu Medición Personalizada
+                    <span>📝</span> Registro de Medición por Distancia
                 </h4>
                 <p class="text-xs text-gray-400">
-                    Elige la distancia a la que realizas la prueba y anota el nivel de señal capturado para agregarlo a la tabla.
+                    Coloca la fuente de sonido (o emite un tono constante) a una distancia, haz clic en capturar para medir el nivel de señal RMS con el micrófono, y agrégalo a la tabla.
                 </p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end pt-2">
@@ -328,8 +328,11 @@
                         <input type="number" id="inputDistancia" value="50" min="10" max="500" step="10" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
                     </div>
                     <div class="space-y-1.5">
-                        <label class="text-xs text-gray-300 block font-medium">Nivel de Señal / Amplitud (RMS):</label>
-                        <input type="number" id="inputSenal" value="2.50" min="0.01" max="10" step="0.05" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        <label class="text-xs text-gray-300 block font-medium">Amplitud Capturada (RMS):</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="inputSenal" value="2.50" min="0.01" max="10" step="0.01" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                            <button onclick="capturarRMSMicrofono()" title="Medir con micrófono" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap">🎙️ Medir</button>
+                        </div>
                     </div>
                     <div>
                         <button onclick="agregarMedicionPersonalizada()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30">
@@ -338,7 +341,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Tabla de Datos -->
             <div class="glass rounded-2xl overflow-hidden">
                 <div class="p-4 border-b border-gray-800 flex justify-between items-center">
@@ -748,28 +751,19 @@ function inicializarGraficoOsciloscopio() {
             btn.innerText = `💾 Guardar Medición de [ ${lugar.toUpperCase()} ]`;
             inicializarGraficoAcusticaSala();
         }
-
+// Inicializar gráfico en vivo de acústica de sala usando el micrófono
         function inicializarGraficoAcusticaSala() {
             const ctxElem = document.getElementById('graficoAcusticaSala');
             if(!ctxElem) return;
 
             if(chartAcusticaSala) chartAcusticaSala.destroy();
 
-            let datosOnda = [];
-            for(let i=0; i<60; i++) {
-                let val = Math.sin(i * 0.3);
-                if(posicionSeleccionada === 'muralla') {
-                    val += (Math.random() * 0.4 - 0.2) + (i % 5 === 0 ? 0.3 : 0);
-                }
-                datosOnda.push(val);
-            }
-
             chartAcusticaSala = new Chart(ctxElem.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 60}, (_, i) => i),
+                    labels: Array.from({length: 100}, (_, i) => i),
                     datasets: [{
-                        data: datosOnda,
+                        data: Array(100).fill(0),
                         borderColor: posicionSeleccionada === 'muralla' ? '#ef4444' : '#10b981',
                         borderWidth: 2.5,
                         tension: 0.3,
@@ -787,10 +781,36 @@ function inicializarGraficoOsciloscopio() {
                     }
                 }
             });
+
+            // Si el micrófono está activo, alimentamos el gráfico en tiempo real
+            if(microfonoActivo && analyser) {
+                bucleAcusticaEnVivo();
+            }
+        }
+
+        function bucleAcusticaEnVivo() {
+            if(!microfonoActivo || !analyser || document.getElementById('vista-experimento-2').classList.contains('hidden')) return;
+            const timeData = new Uint8Array(analyser.fftSize);
+            analyser.getByteTimeDomainData(timeData);
+            
+            const ondaNormalizada = Array.from(timeData.slice(0, 100)).map(v => ((v - 128) / 128) * 3.5);
+            
+            if(chartAcusticaSala) {
+                chartAcusticaSala.data.datasets[0].data = ondaNormalizada;
+                chartAcusticaSala.data.datasets[0].borderColor = posicionSeleccionada === 'muralla' ? '#ef4444' : '#10b981';
+                chartAcusticaSala.update();
+            }
+            requestAnimationFrame(bucleAcusticaEnVivo);
         }
 
         function guardarMedicionActual() {
             if(!posicionSeleccionada) return;
+            
+            if(!microfonoActivo) {
+                alert("Por favor activa el micrófono arriba para registrar la medición real de la sala.");
+                return;
+            }
+
             if(!chartAcusticaSala) inicializarGraficoAcusticaSala();
             const imagenCanvas = chartAcusticaSala.toBase64Image();
 
@@ -813,9 +833,10 @@ function inicializarGraficoOsciloscopio() {
                 document.getElementById('seccionSplitScreen').classList.remove('hidden');
                 document.getElementById('seccionSplitScreen').scrollIntoView({ behavior: 'smooth' });
             } else {
-                document.getElementById('estadoProgresoComp').innerText = "Paso 2 de 3: Selecciona la otra posición faltante";
+                document.getElementById('estadoProgresoComp').innerText = "Paso 2 de 3: Mide y guarda la otra posición";
             }
         }
+        
         // Variables para el Experimento 3 (Propagación del Sonido)
         let chartPropagacion;
         let listaMediciones = [
@@ -866,6 +887,29 @@ function inicializarGraficoOsciloscopio() {
         }
 
         // Funciones interactivas del Experimento 3
+        // Función para calcular la amplitud RMS real del micrófono en el Experimento 3
+        function capturarRMSMicrofono() {
+            if(!microfonoActivo || !analyser) {
+                alert("Por favor activa el micrófono en la parte superior de la página para poder realizar mediciones.");
+                return;
+            }
+
+            const buffer = new Uint8Array(analyser.fftSize);
+            analyser.getByteTimeDomainData(buffer);
+
+            let sumaCuadrados = 0;
+            for (let i = 0; i < buffer.length; i++) {
+                let normalizado = (buffer[i] - 128) / 128; // Llevar a rango -1 a 1
+                sumaCuadrados += normalizado * normalizado;
+            }
+
+            // Calcular raíz cuadrada media (RMS) y multiplicar por un factor escala legible
+            let rms = Math.sqrt(sumaCuadrados / buffer.length) * 5;
+            rms = Math.max(0.05, parseFloat(rms.toFixed(2))); // Evitar ceros absolutos
+
+            document.getElementById('inputSenal').value = rms;
+            alert(`¡Medición capturada con éxito! Amplitud RMS detectada: ${rms}`);
+        }
         function agregarMedicionPersonalizada() {
             const inputDist = document.getElementById('inputDistancia');
             const inputSenal = document.getElementById('inputSenal');
