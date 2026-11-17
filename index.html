@@ -519,33 +519,38 @@
                 
                 microfonoActivo = true;
                 
-                // 1. Ocultar el modal de advertencia del micrófono si está abierto
-                const modalMic = document.getElementById('modalMicrofono');
-                if (modalMic) {
-                    modalMic.classList.add('hidden');
-                }
-                
-                // 2. Cambiar el texto y el diseño del botón superior para que pase a verde/activo
-                const btnHeader = document.getElementById('btnActivarMicTop'); // o el ID de tu botón superior
+                // 1. Cambiar texto del botón superior
                 const textoMic = document.getElementById('textoEstadoMic');
-                if (textoMic) textoMic.innerText = "Micrófono Activo ✓";
+                if(textoMic) textoMic.innerText = "Micrófono Activo ✓";
                 
-                if (btnHeader) {
-                    btnHeader.classList.remove('bg-red-600', 'border-red-500'); // Quita el rojo de alerta
-                    btnHeader.classList.add('bg-emerald-600', 'border-emerald-500'); // Pasa a verde
+                // 2. Cambiar el color del botón superior a verde (usando tu ID estadoMicBadge)
+                const btnHeader = document.getElementById('estadoMicBadge');
+                if(btnHeader) {
+                    btnHeader.classList.remove('bg-red-500/10', 'border-red-500/30', 'text-red-400');
+                    btnHeader.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
                 }
 
-                // Iniciar gráficos del osciloscopio
+                // 3. Ocultar el banner amarillo usando tu ID exacto (bannerPermisoExp1)
+                const bannerAviso = document.getElementById('bannerPermisoExp1');
+                if(bannerAviso) {
+                    bannerAviso.classList.add('hidden');
+                }
+
+                // 4. Ocultar modal flotante si estaba abierto
+                const modalMic = document.getElementById('modalMicrofono');
+                if(modalMic) modalMic.classList.add('hidden');
+                
+                // Iniciar gráficos
                 if (typeof inicializarGraficoOsciloscopio === 'function') {
                     inicializarGraficoOsciloscopio();
                 }
                 
             } catch (error) {
                 console.error("Error al acceder al micrófono:", error);
-                alert("Por favor, permite el acceso al micrófono en tu navegador para realizar las mediciones.");
+                alert("Por favor, permite el acceso al micrófono en tu navegador.");
             }
         }
-
+        
         function seleccionarExperimento(num, nombre) {
             document.getElementById('titulo-exp-badge').innerText = `MÓDULO ${num}`;
             document.getElementById('nombre-experimento-activo') ? document.getElementById('nombre-experimento-activo').innerText = nombre : null;
