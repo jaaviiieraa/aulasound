@@ -507,26 +507,36 @@
         }
 
         async function solicitarPermisoMicrofono() {
-            cerrarModalMicrofono();
             try {
+                // Solicita acceso al micrófono del navegador
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                microfonoActivo = true;
-                document.getElementById('estadoMicBadge').className = "text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5";
-                document.getElementById('textoEstadoMic').innerText = "Micrófono Activo";
-                const b1 = document.getElementById('bannerPermisoExp1');
-                if(b1) b1.classList.add('hidden');
-
+                
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioContext.createMediaStreamSource(stream);
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 1024;
+                analyser.fftSize = 512;
+                
+                const source = audioContext.createMediaStreamSource(stream);
                 source.connect(analyser);
-
-                if (!document.getElementById('vista-experimento-1').classList.contains('hidden')) {
-                    iniciarBucleAudioEnVivo();
+                
+                microfonoActivo = true;
+                
+                // Actualiza el texto del botón en la barra superior
+                const textoMic = document.getElementById('textoEstadoMic');
+                if(textoMic) textoMic.innerText = "Micrófono Activo ✓";
+                
+                // Oculta el modal de micrófono si estaba abierto
+                const modalMic = document.getElementById('modalMicrofono');
+                if(modalMic) modalMic.classList.add('hidden');
+                
+                // Inicia los gráficos en vivo
+                if (typeof inicializarGraficoOsciloscopio === 'function') {
+                    inicializarGraficoOsciloscopio();
                 }
-            } catch (err) {
-                alert("No se pudo acceder al micrófono.");
+                
+                console.log("Micrófono activado exitosamente.");
+            } catch (error) {
+                console.error("Error al acceder al micrófono:", error);
+                alert("No se pudo acceder al micrófono. Por favor, asegúrate de dar permisos en tu navegador.");
             }
         }
 
