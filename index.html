@@ -508,7 +508,6 @@
 
         async function solicitarPermisoMicrofono() {
             try {
-                // Solicita acceso al micrófono del navegador
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -520,23 +519,30 @@
                 
                 microfonoActivo = true;
                 
-                // Actualiza el texto del botón en la barra superior
-                const textoMic = document.getElementById('textoEstadoMic');
-                if(textoMic) textoMic.innerText = "Micrófono Activo ✓";
-                
-                // Oculta el modal de micrófono si estaba abierto
+                // 1. Ocultar el modal de advertencia del micrófono si está abierto
                 const modalMic = document.getElementById('modalMicrofono');
-                if(modalMic) modalMic.classList.add('hidden');
+                if (modalMic) {
+                    modalMic.classList.add('hidden');
+                }
                 
-                // Inicia los gráficos en vivo
+                // 2. Cambiar el texto y el diseño del botón superior para que pase a verde/activo
+                const btnHeader = document.getElementById('btnActivarMicTop'); // o el ID de tu botón superior
+                const textoMic = document.getElementById('textoEstadoMic');
+                if (textoMic) textoMic.innerText = "Micrófono Activo ✓";
+                
+                if (btnHeader) {
+                    btnHeader.classList.remove('bg-red-600', 'border-red-500'); // Quita el rojo de alerta
+                    btnHeader.classList.add('bg-emerald-600', 'border-emerald-500'); // Pasa a verde
+                }
+
+                // Iniciar gráficos del osciloscopio
                 if (typeof inicializarGraficoOsciloscopio === 'function') {
                     inicializarGraficoOsciloscopio();
                 }
                 
-                console.log("Micrófono activado exitosamente.");
             } catch (error) {
                 console.error("Error al acceder al micrófono:", error);
-                alert("No se pudo acceder al micrófono. Por favor, asegúrate de dar permisos en tu navegador.");
+                alert("Por favor, permite el acceso al micrófono en tu navegador para realizar las mediciones.");
             }
         }
 
