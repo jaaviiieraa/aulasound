@@ -445,12 +445,20 @@
         }
 
         function siguientePasoTutorial() {
-            let pasoTutorial = 1;
+           let pasoTutorial = 1;
 
         function abrirTutorial() {
             pasoTutorial = 1;
             actualizarContenidoTutorial();
             document.getElementById('modalTutorial').classList.remove('hidden');
+        }
+
+        function finalizarTutorialYPedirMic() {
+            document.getElementById('modalTutorial').classList.add('hidden');
+            if (!microfonoActivo) {
+                const modalMic = document.getElementById('modalMicrofono');
+                if(modalMic) modalMic.classList.remove('hidden');
+            }
         }
 
         function actualizarContenidoTutorial() {
@@ -460,6 +468,8 @@
             const btnSiguiente = document.getElementById('btnSiguienteModal');
             const btnAnterior = document.getElementById('btnAnteriorModal');
             const icono = document.getElementById('modalIconoContainer');
+
+            if (!titulo || !texto || !cajaExtra || !btnSiguiente || !btnAnterior || !icono) return;
 
             if(pasoTutorial === 1) {
                 icono.innerHTML = "🎙️";
@@ -501,8 +511,6 @@
                 cajaExtra.innerHTML = `<span class="text-emerald-400 text-xs">✔ ¡Todo listo para aplicar el método científico!</span>`;
                 btnAnterior.classList.remove('hidden');
                 btnSiguiente.innerText = "¡Comenzar Laboratorio!";
-            } else {
-                finalizarTutorialYPedirMic();
             }
         }
 
