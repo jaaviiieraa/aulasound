@@ -445,18 +445,80 @@
         }
 
         function siguientePasoTutorial() {
-            pasoTutorial++;
-            if(pasoTutorial === 2) {
-                document.getElementById('modalTitulo').innerText = "Estructura de la Experiencia";
-                document.getElementById('modalTexto').innerText = "Visualiza en tiempo real las ondas, usa tonos de prueba y captura gráficos para comparar.";
-                document.getElementById('modalCajaExtra').innerHTML = `<span class="text-indigo-400 text-xs">✔ Ondas rojas (graves) y azules (agudas).</span>`;
+            let pasoTutorial = 1;
+
+        function abrirTutorial() {
+            pasoTutorial = 1;
+            actualizarContenidoTutorial();
+            document.getElementById('modalTutorial').classList.remove('hidden');
+        }
+
+        function actualizarContenidoTutorial() {
+            const titulo = document.getElementById('modalTitulo');
+            const texto = document.getElementById('modalTexto');
+            const cajaExtra = document.getElementById('modalCajaExtra');
+            const btnSiguiente = document.getElementById('btnSiguienteModal');
+            const btnAnterior = document.getElementById('btnAnteriorModal');
+            const icono = document.getElementById('modalIconoContainer');
+
+            if(pasoTutorial === 1) {
+                icono.innerHTML = "🎙️";
+                titulo.innerText = "Paso 1: Conecta tu entorno (Micrófono)";
+                texto.innerText = "AulaSound analiza las ondas sonoras en tiempo real. Haz clic en 'Activar Micrófono' en la esquina superior para permitir que el sistema capte tu voz, tonos de prueba o sonidos ambientales.";
+                cajaExtra.innerHTML = `<span class="font-semibold text-indigo-400 block">💡 Consejo inicial:</span><span>Asegúrate de estar en un lugar con ruido moderado para que las mediciones salgan limpias y precisas.</span>`;
+                btnAnterior.classList.add('hidden');
+                btnSiguiente.innerText = "Siguiente";
+            } else if(pasoTutorial === 2) {
+                icono.innerHTML = "🧪";
+                titulo.innerText = "Paso 2: Explora los 3 Módulos";
+                texto.innerText = "En el menú principal puedes elegir entre tres prácticas de física acústica diseñadas para la ingeniería:";
+                cajaExtra.innerHTML = `
+                    <div class="space-y-1 text-xs">
+                        <p><b>• Módulo 1:</b> Osciloscopio y frecuencias (graves vs. agudos).</p>
+                        <p><b>• Módulo 2:</b> Acústica de salas (Muralla vs. Centro).</p>
+                        <p><b>• Módulo 3:</b> Propagación y Ley del Inverso del Cuadrado.</p>
+                    </div>
+                `;
+                btnAnterior.classList.remove('hidden');
+                btnSiguiente.innerText = "Siguiente";
             } else if(pasoTutorial === 3) {
-                document.getElementById('modalTitulo').innerText = "¡Listo para Comenzar!";
-                document.getElementById('modalTexto').innerText = "Haz clic en comenzar para iniciar el laboratorio.";
-                document.getElementById('btnSiguienteModal').innerText = "Comenzar";
+                icono.innerHTML = "📸";
+                titulo.innerText = "Paso 3: Mediciones y Capturas";
+                texto.innerText = "Interactúa directamente con las herramientas de captura:";
+                cajaExtra.innerHTML = `
+                    <div class="space-y-1 text-xs">
+                        <p><b>• Módulo 1:</b> Usa 'Capturar Onda' para guardar evidencias en la galería.</p>
+                        <p><b>• Módulo 2:</b> Registra ambas posiciones para activar la vista split-screen.</p>
+                        <p><b>• Módulo 3:</b> Usa el botón '🎙️ Medir' para capturar la amplitud RMS real.</p>
+                    </div>
+                `;
+                btnAnterior.classList.remove('hidden');
+                btnSiguiente.innerText = "Siguiente";
+            } else if(pasoTutorial === 4) {
+                icono.innerHTML = "📊";
+                titulo.innerText = "Paso 4: Análisis y Contraste";
+                texto.innerText = "Al finalizar cada práctica, revisa las conclusiones automáticas y contrasta tus datos empíricos con las curvas teóricas de los gráficos.";
+                cajaExtra.innerHTML = `<span class="text-emerald-400 text-xs">✔ ¡Todo listo para aplicar el método científico!</span>`;
+                btnAnterior.classList.remove('hidden');
+                btnSiguiente.innerText = "¡Comenzar Laboratorio!";
             } else {
                 finalizarTutorialYPedirMic();
             }
+        }
+
+        function siguientePasoTutorial() {
+            pasoTutorial++;
+            if(pasoTutorial <= 4) {
+                actualizarContenidoTutorial();
+            } else {
+                finalizarTutorialYPedirMic();
+            }
+        }
+
+        function pasoAnteriorTutorial() {
+            pasoTutorial--;
+            if(pasoTutorial < 1) pasoTutorial = 1;
+            actualizarContenidoTutorial();
         }
 
         async function solicitarPermisoMicrofono() {
