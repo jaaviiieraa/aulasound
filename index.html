@@ -1206,6 +1206,82 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        const KEY_HIPOTESIS_EXP3 = "aulasound_hipotesis_exp3";
+
+function renderizarVistaHipotesisExp3(valor) {
+  const vista = document.getElementById("vistaHipotesisExp3");
+  if (!vista) return;
+
+  const limpio = (valor || "").trim();
+  if (limpio) {
+    vista.textContent = `"${limpio}"`;
+    vista.classList.remove("italic", "text-slate-400");
+    vista.classList.add("not-italic", "text-white");
+  } else {
+    vista.textContent = "Aún no has escrito una hipótesis para este experimento.";
+    vista.classList.remove("not-italic", "text-white");
+    vista.classList.add("italic", "text-slate-400");
+  }
+}
+
+function actualizarConclusionExp3() {
+  const txt = document.getElementById("textoConclusionExp3");
+  if (!txt) return;
+
+  const hipotesis = (document.getElementById("hipotesisExp3")?.value || "").trim();
+  const notaHipotesis = hipotesis ? ` Tu hipótesis inicial fue: "${hipotesis}".` : "";
+
+  txt.textContent =
+    "A medida que aumenta la distancia respecto a la fuente sonora, la energía de la onda se distribuye sobre una superficie cada vez mayor y sufre atenuación en el medio, por lo que la intensidad percibida disminuye de forma marcada al alejarse (siguiendo la relación de caída con la distancia / ley del inverso del cuadrado en propagación abierta), sin que cambie la frecuencia fundamental del tono emitido." +
+    notaHipotesis;
+}
+
+        //HIPOTESIS 3
+function initHipotesisExp3() {
+  const input = document.getElementById("hipotesisExp3");
+  const estado = document.getElementById("estadoHipotesisExp3");
+  const btnLimpiar = document.getElementById("btnLimpiarHipotesisExp3");
+  if (!input) return;
+
+  const guardada = localStorage.getItem(KEY_HIPOTESIS_EXP3) || "";
+  if (guardada) {
+    input.value = guardada;
+  }
+  renderizarVistaHipotesisExp3(input.value);
+  actualizarConclusionExp3();
+
+  input.addEventListener("input", () => {
+    localStorage.setItem(KEY_HIPOTESIS_EXP3, input.value);
+    renderizarVistaHipotesisExp3(input.value);
+    actualizarConclusionExp3();
+
+    if (estado) {
+      estado.textContent = "Hipótesis guardada ✓";
+      clearTimeout(input._t);
+      input._t = setTimeout(() => {
+        estado.textContent = "Se guarda automáticamente en este navegador.";
+      }, 1800);
+    }
+  });
+
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener("click", () => {
+      input.value = "";
+      localStorage.removeItem(KEY_HIPOTESIS_EXP3);
+      renderizarVistaHipotesisExp3("");
+      actualizarConclusionExp3();
+
+      if (estado) {
+        estado.textContent = "Hipótesis limpiada. Escribe tu nueva predicción.";
+      }
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initHipotesisExp3();
+});
+
         // Funciones interactivas del Experimento 3
         // Función para calcular la amplitud RMS real del micrófono en el Experimento 3
         function capturarRMSMicrofono() {
