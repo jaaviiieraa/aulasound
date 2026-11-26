@@ -917,9 +917,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('titulo-exp-badge').innerText = "MENÚ PRINCIPAL";
             }
         }
-        
+
         //hipotesis 2
-        const KEY_HIPOTESIS_EXP2 = "aulasound_hipotesis_exp2";
+       const KEY_HIPOTESIS_EXP2 = "aulasound_hipotesis_exp2";
 
 function renderizarVistaHipotesisExp2(valor) {
   const vista = document.getElementById("vistaHipotesisExp2");
@@ -937,6 +937,18 @@ function renderizarVistaHipotesisExp2(valor) {
   }
 }
 
+function actualizarConclusionExp2() {
+  const txt = document.getElementById("textoConclusionExp2");
+  if (!txt) return;
+
+  const hipotesis = (document.getElementById("hipotesisExp2")?.value || "").trim();
+  const notaHipotesis = hipotesis ? ` Tu hipótesis inicial fue: "${hipotesis}".` : "";
+
+  txt.textContent =
+    "En un espacio cerrado como la sala de clases, las ondas sonoras no solo llegan de forma directa desde la fuente, sino que también rebotan en superficies duras (como murallas y esquinas) generando reflexiones y refuerzos o interferencias según la posición. Comparar las mediciones cerca de la muralla/esquina frente al centro del aula permite observar cómo la acústica del lugar influye en la intensidad y estabilidad de la señal captada." +
+    notaHipotesis;
+}
+
 function initHipotesisExp2() {
   const input = document.getElementById("hipotesisExp2");
   const estado = document.getElementById("estadoHipotesisExp2");
@@ -948,10 +960,12 @@ function initHipotesisExp2() {
     input.value = guardada;
   }
   renderizarVistaHipotesisExp2(input.value);
+  actualizarConclusionExp2();
 
   input.addEventListener("input", () => {
     localStorage.setItem(KEY_HIPOTESIS_EXP2, input.value);
     renderizarVistaHipotesisExp2(input.value);
+    actualizarConclusionExp2();
 
     if (estado) {
       estado.textContent = "Hipótesis guardada ✓";
@@ -967,6 +981,8 @@ function initHipotesisExp2() {
       input.value = "";
       localStorage.removeItem(KEY_HIPOTESIS_EXP2);
       renderizarVistaHipotesisExp2("");
+      actualizarConclusionExp2();
+
       if (estado) {
         estado.textContent = "Hipótesis limpiada. Escribe tu nueva predicción.";
       }
@@ -977,19 +993,6 @@ function initHipotesisExp2() {
 document.addEventListener("DOMContentLoaded", () => {
   initHipotesisExp2();
 });
-
-        //conclusion 2
-        function actualizarConclusionExp2() {
-  const txt = document.getElementById("textoConclusionExp2");
-  if (!txt) return;
-
-  const hipotesis = (document.getElementById("hipotesisExp2")?.value || "").trim();
-  const notaHipotesis = hipotesis ? ` Tu hipótesis inicial fue: "${hipotesis}".` : "";
-
-  txt.textContent =
-  "En un espacio cerrado como la sala de clases, las ondas sonoras no solo llegan de forma directa desde la fuente, sino que también rebotan en superficies duras (como murallas y esquinas) generando reflexiones y refuerzos o interferencias según la posición. Comparar las mediciones cerca de la muralla/esquina frente al centro del aula permite observar cómo la acústica del lugar influye en la intensidad y estabilidad de la señal captada." +
-  notaHipotesis;
-}
 
         // Funciones interactivas del Experimento 2
         function seleccionarPosicion(lugar) {
