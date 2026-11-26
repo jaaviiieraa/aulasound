@@ -815,52 +815,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const txt = document.getElementById('textoConclusion');
   if (!txt) return;
 
-  const hasGrave = listaCapturas.some(c => c.includes("Grave"));
-  const hasAguda = listaCapturas.some(c => c.includes("Aguda"));
   const hipotesis = (document.getElementById("hipotesisExp1")?.value || "").trim();
-  const notaHipotesis = hipotesis ? ` Tu hipótesis fue: "${hipotesis}".` : "";
+  const notaHipotesis = hipotesis ? ` Tu hipótesis inicial fue: "${hipotesis}".` : "";
 
-  if (!listaCapturas || listaCapturas.length === 0) {
-    txt.textContent =
-      "Aún no hay capturas. Emite un sonido grave y luego uno agudo para comparar sus ondas." +
-      notaHipotesis;
-    return;
-  }
-
-  const freqs = registrosCapturasExp1
-    .map(r => r.freq)
-    .filter(f => typeof f === "number" && f > 0);
-
-  let detalleHz = "";
-  if (freqs.length >= 2) {
-    const fMin = Math.round(Math.min(...freqs));
-    const fMax = Math.round(Math.max(...freqs));
-    if (fMax > fMin) {
-      detalleHz = ` En tus mediciones se contrastó una frecuencia menor de ${fMin} Hz (ciclos más amplios y espaciados) frente a una mayor de ${fMax} Hz (ciclos más estrechos y frecuentes).`;
-    }
-  }
-
-  if (hasGrave && hasAguda) {
-    txt.textContent =
-      "Al comparar sonidos graves y agudos, las ondas graves presentan ciclos más separados y menor frecuencia, mientras que las ondas agudas muestran ciclos más juntos y mayor frecuencia." +
-      detalleHz +
-      notaHipotesis;
-  } else if (hasGrave) {
-    txt.textContent =
-      "Registraste una onda grave (menor frecuencia y ciclos más espaciados). Toma ahora una captura con un sonido agudo para contrastar cómo cambian los ciclos." +
-      detalleHz +
-      notaHipotesis;
-  } else if (hasAguda) {
-    txt.textContent =
-      "Registraste una onda aguda (mayor frecuencia y ciclos más juntos). Toma ahora una captura con un sonido grave para contrastar la diferencia." +
-      detalleHz +
-      notaHipotesis;
-  } else {
-    txt.textContent =
-      `Capturaste ${listaCapturas.length} medición(es). Prueba emitiendo un sonido grave y otro agudo para observar claramente la diferencia entre ondas.` +
-      detalleHz +
-      notaHipotesis;
-  }
+  txt.textContent =
+    "Al comparar las ondas capturadas, puedes diferenciarlas por su color, frecuencia (Hz) y separación de ciclos: una mayor frecuencia corresponde a un sonido más agudo con ciclos más juntos, mientras que una frecuencia menor indica un tono más grave con ciclos más espaciados; por su parte, la altura de la onda (amplitud) se asocia a su intensidad o volumen." +
+    notaHipotesis;
 }
 
         function limpiarCapturas() {
