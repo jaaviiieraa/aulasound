@@ -733,7 +733,42 @@ function inicializarGraficoOsciloscopio() {
             actualizar();
         }
         
-            
+        const KEY_HIPOTESIS_EXP1 = "aulasound_hipotesis_exp1";
+const registrosCapturasExp1 = [];
+
+function initHipotesisExp1() {
+  const input = document.getElementById("hipotesisExp1");
+  const estado = document.getElementById("estadoHipotesisExp1");
+  const btnLimpiar = document.getElementById("btnLimpiarHipotesisExp1");
+  if (!input) return;
+
+  const guardada = localStorage.getItem(KEY_HIPOTESIS_EXP1);
+  if (guardada) input.value = guardada;
+
+  input.addEventListener("input", () => {
+    localStorage.setItem(KEY_HIPOTESIS_EXP1, input.value);
+    if (estado) {
+      estado.textContent = "Hipótesis guardada ✓";
+      clearTimeout(input._t);
+      input._t = setTimeout(() => {
+        estado.textContent = "Se guarda automáticamente en este navegador.";
+      }, 1800);
+    }
+  });
+
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener("click", () => {
+      input.value = "";
+      localStorage.removeItem(KEY_HIPOTESIS_EXP1);
+      if (estado) estado.textContent = "Hipótesis limpiada. Escribe tu nueva predicción.";
+      actualizarConclusionDinamica();
+    });
+  }
+}
+document.addEventListener("DOMContentLoaded", () => {
+  initHipotesisExp1();
+});
+        
         function capturarGraficoOnda() {
             if(!chartOsc) return;
             contadorCapturas++;
@@ -747,6 +782,10 @@ function inicializarGraficoOsciloscopio() {
             const freqTexto = frecuenciaDetectada > 0 ? `${frecuenciaDetectada} Hz` : "Sin señal";
 
             listaCapturas.push(tipoOndaActual);
+            registrosCapturasExp1.push({
+              tipo: tipoOndaActual,
+              freq: Number(frecuenciaDetectada) || 0
+                });
 
             let badgeColor = "bg-indigo-500/20 text-indigo-300 border-indigo-500/30";
             if(tipoOndaActual.includes("Grave")) badgeColor = "bg-red-500/20 text-red-400 border-red-500/30";
@@ -773,18 +812,56 @@ function inicializarGraficoOsciloscopio() {
         }
 
         function actualizarConclusionDinamica() {
-            const txt = document.getElementById('textoConclusion');
-            let hasGrave = listaCapturas.some(c => c.includes("Grave"));
-            let hasAguda = listaCapturas.some(c => c.includes("Aguda"));
+  const txt = document.getElementById('textoConclusion');
+  if (!txt) return;
 
-            if (hasGrave && hasAguda) {
-                txt.innerHTML = `✅ <b>Análisis completado:</b> Al comparar las capturas, se aprecia la diferencia evidente: la <b>onda grave (roja)</b> tiene crestas y valles amplios (período largo), mientras que la <b>onda aguda (azul)</b> muestra crestas y valles muy comprimidos (período corto).`;
-            } else if (hasGrave) {
-                txt.innerHTML = `📌 Registraste una onda grave. Prueba ahora emitiendo un sonido agudo o usando el botón azul para contrastar.`;
-            } else if (hasAguda) {
-                txt.innerHTML = `📌 Registraste una onda aguda. Prueba ahora con un sonido grave para completar la comparación.`;
-            }
-        }
+  const hasGrave = listaCapturas.some(c => c.includes("Grave"));
+  const hasAguda = listaCapturas.some(c => c.includes("Aguda"));
+  const hipotesis = (document.getElementById("hipotesisExp1")?.value || "").trim();
+  const notaHipotesis = hipotesis ? ` Tu hipótesis fue: "${hipotesis}".` : "";
+
+  if (!listaCapturas || listaCapturas.length === 0) {
+    txt.textContent =
+      "Aún no hay capturas. Emite un sonido grave y luego uno agudo para comparar sus ondas." +
+      notaHipotesis;
+    return;
+  }
+
+  const freqs = registrosCapturasExp1
+    .map(r => r.freq)
+    .filter(f => typeof f === "number" && f > 0);
+
+  let detalleHz = "";
+  if (freqs.length >= 2) {
+    const fMin = Math.round(Math.min(...freqs));
+    const fMax = Math.round(Math.max(...freqs));
+    if (fMax > fMin) {
+      detalleHz = ` En tus mediciones se contrastó una frecuencia menor de ${fMin} Hz (ciclos más amplios y espaciados) frente a una mayor de ${fMax} Hz (ciclos más estrechos y frecuentes).`;
+    }
+  }
+
+  if (hasGrave && hasAguda) {
+    txt.textContent =
+      "Al comparar sonidos graves y agudos, las ondas graves presentan ciclos más separados y menor frecuencia, mientras que las ondas agudas muestran ciclos más juntos y mayor frecuencia." +
+      detalleHz +
+      notaHipotesis;
+  } else if (hasGrave) {
+    txt.textContent =
+      "Registraste una onda grave (menor frecuencia y ciclos más espaciados). Toma ahora una captura con un sonido agudo para contrastar cómo cambian los ciclos." +
+      detalleHz +
+      notaHipotesis;
+  } else if (hasAguda) {
+    txt.textContent =
+      "Registraste una onda aguda (mayor frecuencia y ciclos más juntos). Toma ahora una captura con un sonido grave para contrastar la diferencia." +
+      detalleHz +
+      notaHipotesis;
+  } else {
+    txt.textContent =
+      `Capturaste ${listaCapturas.length} medición(es). Prueba emitiendo un sonido grave y otro agudo para observar claramente la diferencia entre ondas.` +
+      detalleHz +
+      notaHipotesis;
+  }
+}
 
         function limpiarCapturas() {
             contadorCapturas = 0;
