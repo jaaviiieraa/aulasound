@@ -350,6 +350,17 @@
                 </div>
             </div>
         </section>
+
+        <!-- Conclusión — Experimento 2 -->
+<div id="seccionConclusionExp2" class="mt-6 rounded-2xl border border-emerald-700/60 bg-emerald-950/30 p-5 text-emerald-50 shadow-lg">
+  <h4 class="text-sm font-bold text-emerald-300">
+    📊 Conclusión y Análisis Experimental
+  </h4>
+  <p id="textoConclusionExp2" class="mt-2 text-sm leading-relaxed text-emerald-100">
+    Realiza mediciones en distintas zonas de la sala (por ejemplo, cerca de una muralla/esquina y en el centro) para analizar cómo influye la acústica del recinto.
+  </p>
+</div>
+        
         <!-- VISTA DE EXPERIMENTO 3: PROPAGACIÓN DEL SONIDO -->
         <section id="vista-experimento-3" class="hidden space-y-6">
             
@@ -972,6 +983,19 @@ document.addEventListener("DOMContentLoaded", () => {
   initHipotesisExp2();
 });
 
+        //conclusion 2
+        function actualizarConclusionExp2() {
+  const txt = document.getElementById("textoConclusionExp2");
+  if (!txt) return;
+
+  const hipotesis = (document.getElementById("hipotesisExp2")?.value || "").trim();
+  const notaHipotesis = hipotesis ? ` Tu hipótesis inicial fue: "${hipotesis}".` : "";
+
+  txt.textContent =
+    "En un espacio cerrado como la sala de clases, las ondas sonoras no solo llegan de forma directa desde la fuente, sino que también rebotan en superficies duras (como murallas y esquinas) generando reflexiones y refuerzos o interferencias según la posición. Comparar las mediciones cerca de la muralla/esquina frente al centro del aula permite observar cómo la acústica del lugar influye en la intensidad y estabilidad de la señal captada." +
+    notaHipotesis;
+}
+
         // Funciones interactivas del Experimento 2
         function seleccionarPosicion(lugar) {
             posicionSeleccionada = lugar;
@@ -1081,7 +1105,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('estadoProgresoComp').innerText = "Paso 2 de 3: Mide y guarda la otra posición";
             }
         }
-        
+
+    
         // Variables para el Experimento 3 (Propagación del Sonido)
         let chartPropagacion;
         let listaMediciones = [
