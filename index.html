@@ -911,6 +911,66 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('titulo-exp-badge').innerText = "MENÚ PRINCIPAL";
             }
         }
+        
+        //hipotesis 2
+        const KEY_HIPOTESIS_EXP2 = "aulasound_hipotesis_exp2";
+
+function renderizarVistaHipotesisExp2(valor) {
+  const vista = document.getElementById("vistaHipotesisExp2");
+  if (!vista) return;
+
+  const limpio = (valor || "").trim();
+  if (limpio) {
+    vista.textContent = `"${limpio}"`;
+    vista.classList.remove("italic", "text-slate-400");
+    vista.classList.add("not-italic", "text-white");
+  } else {
+    vista.textContent = "Aún no has escrito una hipótesis para este experimento.";
+    vista.classList.remove("not-italic", "text-white");
+    vista.classList.add("italic", "text-slate-400");
+  }
+}
+
+function initHipotesisExp2() {
+  const input = document.getElementById("hipotesisExp2");
+  const estado = document.getElementById("estadoHipotesisExp2");
+  const btnLimpiar = document.getElementById("btnLimpiarHipotesisExp2");
+  if (!input) return;
+
+  const guardada = localStorage.getItem(KEY_HIPOTESIS_EXP2) || "";
+  if (guardada) {
+    input.value = guardada;
+  }
+  renderizarVistaHipotesisExp2(input.value);
+
+  input.addEventListener("input", () => {
+    localStorage.setItem(KEY_HIPOTESIS_EXP2, input.value);
+    renderizarVistaHipotesisExp2(input.value);
+
+    if (estado) {
+      estado.textContent = "Hipótesis guardada ✓";
+      clearTimeout(input._t);
+      input._t = setTimeout(() => {
+        estado.textContent = "Se guarda automáticamente en este navegador.";
+      }, 1800);
+    }
+  });
+
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener("click", () => {
+      input.value = "";
+      localStorage.removeItem(KEY_HIPOTESIS_EXP2);
+      renderizarVistaHipotesisExp2("");
+      if (estado) {
+        estado.textContent = "Hipótesis limpiada. Escribe tu nueva predicción.";
+      }
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initHipotesisExp2();
+});
 
         // Funciones interactivas del Experimento 2
         function seleccionarPosicion(lugar) {
